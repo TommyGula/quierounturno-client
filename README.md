@@ -68,3 +68,14 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+Para editar:
+
+<!-- 1) Agregar el signo de cierre al modal de login
+2) Poner en 2 columnas (izq cartel de texto, der el video) toda la home -->
+3) En la home poner el buscador como un selector
+<!-- 4) Los botones del header solo aparecen en Home (quiero ofrecer y quiero buscar) -->
+5) Para las monedas ver los medios de pago de la api de Mercadopago
+6) Depende de la ubicación que pusiste en el mapa, que te aparezca tu moneda y la opción USD
+7) Al crear un negocio, automáticamente se carga con el usuario como un trabajador, con todos los derechos de administrador total
+8) Modal de Info (i) al lado de cada título de Crear negocio / servicio / perfil etc. Que al clickearlo salte un modal con información de cómo cargar todo correctamente
