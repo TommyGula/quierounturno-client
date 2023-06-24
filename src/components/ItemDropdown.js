@@ -10,24 +10,27 @@ const ItemDropdown = (props) => {
     const [opened, setOpened] = useState(false);
 
     const collapse = () => {
-        let height = document.getElementById("collapseSection" + props.seemoretarget).offsetHeight;
-        if (!opened || opened === "auto") {
-            if (height) {
-                setOpened(height);
+        let height = document.getElementById("collapseSection" + props.seemoretarget);
+        if (height) {
+            height = height.offsetHeight;
+            if (!opened || opened === "auto") {
+                if (height) {
+                    setOpened(height);
+                } else {
+                    setOpened("auto");
+                    setTimeout(() => {
+                        collapse();
+                    },500)
+                }
             } else {
-                setOpened("auto");
-                setTimeout(() => {
-                    collapse();
-                },500)
-            }
-        } else {
-            setOpened(false);
-        };
+                setOpened(false);
+            };
+        }
     };
 
     useEffect(() => {
         collapse();
-    },[]);
+    },[props.seemoretarget]);
 
     return(
         <div className="ItemDropdown">

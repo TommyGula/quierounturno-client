@@ -4,8 +4,10 @@ import MyModal from "../components/MyModal";
 import MySnackbar from "../components/MySnackbar";
 import ProtectedRoute from "./ProtectedRoute";
 import UserContext from "../context/UserContext";
+import { useParams } from "react-router-dom";
 
 const PageContext = (props) => {
+    const { init_message } = useParams();
     const navigate = useNavigate();
     const context = useContext(UserContext);
     const [show, setShow] = useState(false);
@@ -17,6 +19,12 @@ const PageContext = (props) => {
     const [alertType, setAlertType] = useState(null);
     const [alertDuration, setAlertDuration] = useState(null);
     const [seeMore, setSeeMore] = useState(false);
+
+    useEffect(() => {
+        if (init_message) {
+            handleAlertShow(init_message.replace(/%20/g, " "), "success");
+        };
+    })
 
     const handleSeeMore = (e) => {
         let seemoretarget = e.target.getAttribute("seemoretarget");

@@ -254,7 +254,7 @@ export default function QuieroUnTurno({context, navigate, handleAlertShow}) {
         </React.Fragment>
       ) : (
         <React.Fragment>
-            <div className="switch-container py-5">
+            <div className="switch-container pt-5 pb-3">
 
                 <div className="switch-tab" style={{display:(activeStep === 0 ? "block" : "none")}}>
                 <ItemDropdown static image={(src) => process.env.REACT_APP_BACKEND_PATH + "uploads/" + src} imageAttr="logo" items={[store]} title="Negocio seleccionado" seemoretarget={"selectedStore"} noCta readonly></ItemDropdown>

@@ -243,7 +243,7 @@ const UserStore = ({ context, navigate, handleShow, copyToClipboard, createDate 
                         </div>
                     </div>
                     <div className="">
-                        <ItemDropdown items={services} title="Servicios" seemoretarget={pageName + "2"} readonly handleShow={handleShow}></ItemDropdown>
+                        <ItemDropdown items={services} title="Servicios" seemoretarget={pageName + "2"} readonly ctaText="SOLICITAR" handleShow={handleShow}></ItemDropdown>
                     </div>    
                     <div className="mt-0">
                         <div className="w-100 text-center">

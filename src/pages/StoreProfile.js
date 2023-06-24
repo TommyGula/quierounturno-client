@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import FormContext from "../components/FormContext";
 import SectionTitle from "../components/SectionTitle";
 import Spinner from "../components/Spinner";
@@ -113,6 +113,12 @@ const StoreProfile = ({ context, navigate, show, setShow, redirect, setRedirect,
         });
     };
 
+    const activatePaymentMethod = () => {
+        get("businesses/auth/mp/" + companyId, context.token, (url) => {
+            window.location.href = url.redirect_url;
+        })
+    };
+
     const schemaToValue = (schema) => {
         return Object.keys(schema).reduce((r,a) => {
             let day = schema[a].reduce((r2,a2) => {
@@ -211,10 +217,16 @@ const StoreProfile = ({ context, navigate, show, setShow, redirect, setRedirect,
                             <img src={Share} className="pointer hoverable" alt="Click here to share link" />
                         </div>
                     </div>
-                    <div className="mt-4">
+                    <div className="my-4">
                         <div className="w-100 text-center">
-                            <Button variant="primary" className="px-4 py-2 my-4" onClick={() => navigate("/" + companyId + "/agendas/")}>VER AGENDA</Button>
+                            <Link variant="primary" className="btn btn-primary px-4 py-2 mt-4" to={"/" + companyId + "/agendas/"}>VER AGENDA</Link>
                         </div>
+                        {
+                            !store.paymentMethodActive ? 
+                            <div className="w-100 text-center">
+                                <Button variant="danger" className="btn-danger btn px-4 py-2 mt-4" onClick={activatePaymentMethod}>ACTIVAR MÉTODO DE PAGO</Button>
+                            </div> : null
+                        }
                     </div>
                     <div>
                         <SectionTitle centered title="Demás datos del negocio" onClick={() => handleShow("Título", "Esta es una descripción informativa acerca de la sección que ha clickeado")}></SectionTitle>
@@ -229,7 +241,7 @@ const StoreProfile = ({ context, navigate, show, setShow, redirect, setRedirect,
                         <ItemDropdown items={services} title="Servicios que va a prestar" seemoretarget="services" readonly handleShow={handleShow}></ItemDropdown>
                     </div>                    
                     <div className="">
-                        <SectionTitle title="Profesional/es asignado/s al negocio" centered onClick={() => handleShow("Título", "Esta es una descripción informativa acerca de la sección que ha clickeado")}> </SectionTitle>
+                        <SectionTitle title="Personal asignado al negocio" centered onClick={() => handleShow("Título", "Esta es una descripción informativa acerca de la sección que ha clickeado")}> </SectionTitle>
                         <div className="separator"></div>
                         <ul className="team px-0 mt-3">
                             {
