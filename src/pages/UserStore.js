@@ -183,7 +183,7 @@ const UserStore = ({ context, navigate, handleShow, copyToClipboard, createDate 
                     <div className="rounded rounded-circle position-relative d-flex align-items-center justify-content-center">
                         {
                             store.logo ?
-                            <img src={"http://localhost:3001/uploads/" + store.logo} alt="" style={{maxWidth:"300px"}}/> :
+                            <img src={process.env.REACT_APP_BACKEND_PATH + "uploads/" + store.logo} alt="" style={{maxWidth:"300px"}}/> :
                             <img src={NoLogo} alt="Este negocio no tiene un logo" style={{maxWidth:"300px"}}/>
                         }
                     </div>
@@ -282,7 +282,7 @@ const UserStore = ({ context, navigate, handleShow, copyToClipboard, createDate 
                                 store.photos.map((ph, i) => {
                                     return(
                                         <div key={i}>
-                                            <div className="w-100 ratio ratio-1x1 bg-cover-center rounded" style={{backgroundImage:"url('http://localhost:3001/uploads/" + ph + "')"}}></div>
+                                            <div className="w-100 ratio ratio-1x1 bg-cover-center rounded" style={{backgroundImage:"url('" + process.env.REACT_APP_BACKEND_PATH + "uploads/" + ph + "')"}}></div>
                                         </div>
                                     )
                                 })

@@ -37,7 +37,7 @@ const Login = () => {
 
     const handleSubmit = () => {
         if (form.password && form.email) {
-            fetch("http://localhost:3001/users/login", {
+            fetch(process.env.REACT_APP_BACKEND_PATH + "users/login", {
                 method:"POST",
                 headers:{"Content-Type":"application/json"},
                 body:{

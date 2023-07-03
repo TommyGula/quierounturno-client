@@ -26,7 +26,7 @@ export default function QuieroUnTurno({context, navigate, handleAlertShow}) {
   const [employees, setEmployees] = useState([]);
   const [filteredEmployees, setFilteredEmployees] = useState(context.appointment.employee ? [context.appointment.employee] : null);
   const [services, setServices] = useState([]);
-  const [selectedDay, setSelectedDay] = useState(new Date(context.appointment.date) || null);
+  const [selectedDay, setSelectedDay] = useState(context.appointment.date ? new Date(context.appointment.date) : null);
   const [selectedTimeRange, setSelectedTimeRange] = useState(context.appointment.timeRange || 0);
   const [store, setStore] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -147,6 +147,7 @@ export default function QuieroUnTurno({context, navigate, handleAlertShow}) {
 
   const handleReset = () => {
     setActiveStep(0);
+    context.initAppointment(context.appointment.companyId);
   };
 
   const buildDailySchedule = (day) => {
@@ -192,6 +193,94 @@ export default function QuieroUnTurno({context, navigate, handleAlertShow}) {
       return r;
     },[])
 };
+
+  const renderSwith = (step) => {
+    switch(step) {
+      case 0:
+        return (
+          <div className="switch-tab" style={{display:(activeStep === 0 ? "block" : "none")}}>
+          <ItemDropdown static image={(src) => process.env.REACT_APP_BACKEND_PATH + "uploads/" + src} imageAttr="logo" items={[store]} title="Negocio seleccionado" seemoretarget={"selectedStore"} noCta readonly></ItemDropdown>
+          <h3 className="title mb-4 mt-5">Selecciona un servicio</h3>
+          <Autocomplete
+              options={services}
+              getOptionLabel={(op) => op.name + " - " + op.description}
+              id="select-on-focus"
+              isOptionEqualToValue={(op,val) => op._id === val._id}
+              value={context.appointment ? (context.appointment.service ? context.appointment.service.name + " - " + context.appointment.service.description: "") : ""}
+              inputValue={context.appointment ? (context.appointment.service ? context.appointment.service.name + " - " + context.appointment.service.description: "") : ""}
+              selectOnFocus
+              renderOption={(props,op) => (
+                  <Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} key={op._id} {...props}>
+                      {op.name + " - " + op.description}
+                  </Box>
+              )}
+              renderInput={(params) => {
+                return (
+                  <TextField {...params}  label="Selecciona un servicio" variant="standard" />
+                )
+              }}
+              onChange={(e,val) => {
+                  context.buildAppointment("service", val)
+              }}
+          />
+          {
+              context.appointment.serviceId ? 
+              <ItemDropdown static items={services.filter(service => service._id === context.appointment.service.serviceId)} seemoretarget={"selectedStoreServices"} ctaText="VER" readonly></ItemDropdown> : null
+          }
+          </div>
+        )
+      case 1: 
+        return (
+          <div className="switch-tab" style={{display:(activeStep === 1 ? "block" : "none")}}>
+                  <h3 className="title">Selecciona un día y horario</h3>
+                  <div className="row mt-4 row-cols-2 gx-4">
+                    <div>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <Stack spacing={2}>
+                            <DatePicker
+                                label="Día"
+                                renderInput={(params) => <TextField {...params} />}
+                                value={context.appointment.date || selectedDay}
+                                onChange={(date) => {
+                                  setSelectedDay(new Date(date));
+                                  context.buildAppointment("date", new Date(date));
+                                }}
+                            />
+                        </Stack>
+                    </LocalizationProvider>
+                    </div>
+                    <div>
+                      <InnerSelect selectedDay={selectedDay} selectedTimeRange={selectedTimeRange} buildDailySchedule={buildDailySchedule} onChange={handleRangeChange} days={days}></InnerSelect>
+                    </div>
+                  </div>
+                  {
+                    filteredEmployees ? 
+                    <div className='mt-5'>
+                      <h3 className="title">Selecciona al profesional encargado</h3>
+                      <ul className="team px-0 mt-3">
+                          {
+                              filteredEmployees ? 
+                              <div>
+                                  {
+                                      filteredEmployees.map(employee => {
+                                          return(
+                                            <ListItem key={filteredEmployees.indexOf(employee)} name={employee.firstName} add={() => context.buildAppointment("employee", employee)} remove={() => context.buildAppointment("employee", null)} selected={context.appointment.employee ? context.appointment.employee._id === employee._id : false} lastName={employee.lastName} id={employee._id}></ListItem>
+                                          )
+                                      })
+                                  }
+                              </div> : null
+                          }
+                      </ul>
+                    </div> : null
+                  }
+                </div>
+        )
+      case 3:
+        return(
+          <div className="switch-tab" style={{display:(activeStep === 2 ? "block" : "none")}}>Step 3</div>
+        )
+    }
+  }
 
   const handleRangeChange = (val) => {
     setSelectedTimeRange(val);
@@ -255,81 +344,7 @@ export default function QuieroUnTurno({context, navigate, handleAlertShow}) {
       ) : (
         <React.Fragment>
             <div className="switch-container pt-5 pb-3">
-
-                <div className="switch-tab" style={{display:(activeStep === 0 ? "block" : "none")}}>
-                <ItemDropdown static image={(src) => process.env.REACT_APP_BACKEND_PATH + "uploads/" + src} imageAttr="logo" items={[store]} title="Negocio seleccionado" seemoretarget={"selectedStore"} noCta readonly></ItemDropdown>
-                <h3 className="title mb-4 mt-5">Selecciona un servicio</h3>
-                <Autocomplete
-                    options={services}
-                    getOptionLabel={(op) => op.name + " - " + op.description}
-                    id="select-on-focus"
-                    isOptionEqualToValue={(op,val) => op._id === val._id}
-                    value={context.appointment ? (context.appointment.service ? context.appointment.service.name + " - " + context.appointment.service.description: "") : ""}
-                    inputValue={context.appointment ? (context.appointment.service ? context.appointment.service.name + " - " + context.appointment.service.description: "") : ""}
-                    selectOnFocus
-                    renderOption={(props,op) => (
-                        <Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} key={op._id} {...props}>
-                            {op.name + " - " + op.description}
-                        </Box>
-                    )}
-                    renderInput={(params) => {
-                      return (
-                        <TextField {...params}  label="Selecciona un servicio" variant="standard" />
-                      )
-                    }}
-                    onChange={(e,val) => {
-                        context.buildAppointment("service", val)
-                    }}
-                />
-                {
-                    context.appointment.serviceId ? 
-                    <ItemDropdown static items={services.filter(service => service._id === context.appointment.service.serviceId)} seemoretarget={"selectedStoreServices"} ctaText="VER" readonly></ItemDropdown> : null
-                }
-                </div>
-                <div className="switch-tab" style={{display:(activeStep === 1 ? "block" : "none")}}>
-                  <h3 className="title">Selecciona un día y horario</h3>
-                  <div className="row mt-4 row-cols-2 gx-4">
-                    <div>
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <Stack spacing={2}>
-                            <DatePicker
-                                label="Día"
-                                renderInput={(params) => <TextField {...params} />}
-                                value={context.appointment.date || selectedDay}
-                                onChange={(date) => {
-                                  setSelectedDay(new Date(date));
-                                  context.buildAppointment("date", new Date(date));
-                                }}
-                            />
-                        </Stack>
-                    </LocalizationProvider>
-                    </div>
-                    <div>
-                      <InnerSelect selectedDay={selectedDay} selectedTimeRange={selectedTimeRange} buildDailySchedule={buildDailySchedule} onChange={handleRangeChange} days={days}></InnerSelect>
-                    </div>
-                  </div>
-                  {
-                    filteredEmployees ? 
-                    <div className='mt-5'>
-                      <h3 className="title">Selecciona al profesional encargado</h3>
-                      <ul className="team px-0 mt-3">
-                          {
-                              filteredEmployees ? 
-                              <div>
-                                  {
-                                      filteredEmployees.map(employee => {
-                                          return(
-                                            <ListItem key={filteredEmployees.indexOf(employee)} name={employee.firstName} add={() => context.buildAppointment("employee", employee)} remove={() => context.buildAppointment("employee", null)} selected={context.appointment.employee ? context.appointment.employee._id === employee._id : false} lastName={employee.lastName} id={employee._id}></ListItem>
-                                          )
-                                      })
-                                  }
-                              </div> : null
-                          }
-                      </ul>
-                    </div> : null
-                  }
-                </div>
-                <div className="switch-tab" style={{display:(activeStep === 2 ? "block" : "none")}}>Step 3</div>
+                {renderSwith(activeStep)}
             </div>
           <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
             <Button

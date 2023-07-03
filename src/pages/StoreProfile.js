@@ -65,7 +65,7 @@ const StoreProfile = ({ context, navigate, show, setShow, redirect, setRedirect,
         let formData = new FormData()
         formData.append('file', img.data);
         formData.append('userId', context.user._id);
-        const response = await fetch('http://localhost:3001/upload', {
+        const response = await fetch(process.env.REACT_APP_BACKEND_PATH + 'upload', {
             method: 'POST',
             body: formData,
         })
@@ -176,7 +176,7 @@ const StoreProfile = ({ context, navigate, show, setShow, redirect, setRedirect,
                     <div className="logo rounded rounded-circle position-relative d-flex align-items-center justify-content-center overflow-hidden">
                         {
                             store.logo ?
-                            <img src={"http://localhost:3001/uploads/" + store.logo} alt="" width={"100%"}/> :
+                            <img src={process.env.REACT_APP_BACKEND_PATH + "uploads/" + store.logo} alt="" width={"100%"}/> :
                             <p className="m-0">Agregar Logo</p>
                         }
                     </div>

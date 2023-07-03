@@ -79,7 +79,7 @@ const EmployeeProfile = ({ context, navigate, show, setShow, redirect, setRedire
         let formData = new FormData()
         formData.append('file', img.data);
         formData.append('userId', context.user._id);
-        const response = await fetch('http://localhost:3001/upload', {
+        const response = await fetch(process.env.REACT_APP_BACKEND_PATH + 'upload', {
             method: 'POST',
             body: formData,
         })
@@ -144,7 +144,7 @@ const EmployeeProfile = ({ context, navigate, show, setShow, redirect, setRedire
                     <div className="logo rounded rounded-circle position-relative d-flex align-items-center justify-content-center overflow-hidden">
                         {
                             image ?
-                            <img src={"http://localhost:3001/uploads/" + image.data.name} alt={image.data.name} width={"100%"}/> :
+                            <img src={process.env.REACT_APP_BACKEND_PATH + "uploads/" + image.data.name} alt={image.data.name} width={"100%"}/> :
                             <img width={"100%"} src={Avatar} alt="No profile image selected" />
                         }
                     </div>

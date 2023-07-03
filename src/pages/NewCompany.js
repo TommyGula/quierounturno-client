@@ -100,7 +100,7 @@ const NewCompany = ({ navigate, show, setShow, redirect, setRedirect, modalTitle
         let formData = new FormData()
         formData.append('file', img.data);
         formData.append('userId', context.user._id);
-        const response = await fetch('http://localhost:3001/upload', {
+        const response = await fetch(process.env.REACT_APP_BACKEND_PATH + 'upload', {
             method: 'POST',
             body: formData,
         })
@@ -132,7 +132,7 @@ const NewCompany = ({ navigate, show, setShow, redirect, setRedirect, modalTitle
     };
 
     const createUser = (companyId, callback) => {
-        fetch("http://localhost:3001/employees",{
+        fetch(process.env.REACT_APP_BACKEND_PATH + "/employees",{
             method:"POST",
             headers:{ 'Content-Type': 'application/json' },
             body:JSON.stringify({
@@ -149,7 +149,7 @@ const NewCompany = ({ navigate, show, setShow, redirect, setRedirect, modalTitle
     };
 
     return(
-        <FormContext callback={createUser} redirect={"/[_id]/nuevo/servicio"} cta="CREAR"  redirectMessage="Ahora te recomendamos crear un servicio para tu negocio" setRedirect={setRedirect} body={body} setSubmited={setSubmited} requiredFields={requiredFields} postContext="businesses" method="POST" modal={handleShow}>
+        <FormContext callback={createUser} redirect={"/me/[_id]/nuevo/servicio"} cta="CREAR"  redirectMessage="Ahora te recomendamos crear un servicio para tu negocio" setRedirect={setRedirect} body={body} setSubmited={setSubmited} requiredFields={requiredFields} postContext="businesses" method="POST" modal={handleShow}>
             <div className="p-4">
                 <h3 className="title f-500">Datos del Negocio <Info className="info-icon"  onClick={() => handleShow("Título", "Esta es una descripción informativa acerca de la sección que ha clickeado")} validationtext="Complete todos los campos requeridos" requiredtarget={business.name}></Info></h3>
                 <div className="row row-cols-md-2 g-3 mt-2">
@@ -184,7 +184,7 @@ const NewCompany = ({ navigate, show, setShow, redirect, setRedirect, modalTitle
                     <div className="logo rounded rounded-circle position-relative d-flex align-items-center justify-content-center overflow-hidden">
                         {
                             image ?
-                            <img src={"http://localhost:3001/uploads/" + image.data.name} alt="" width={"100%"}/> :
+                            <img src={process.env.REACT_APP_BACKEND_PATH + "uploads/" + image.data.name} alt="" width={"100%"}/> :
                             <p className="m-0">Agregar Logo</p>
                         }
                     </div>

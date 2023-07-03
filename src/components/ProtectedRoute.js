@@ -10,7 +10,7 @@ const ProtectedRoute = ({ children }) => {
     const navigate = useNavigate();
 
     const authUser = (cb) => {
-        fetch("http://localhost:3001/users/auth/verify", {
+        fetch(process.env.REACT_APP_BACKEND_PATH + "users/auth/verify", {
             headers: {'Content-Type':'application/json', 'Authorization': context.token},
         })
         .then(res=>res.json())

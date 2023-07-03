@@ -30,7 +30,7 @@ const Home = () => {
                 </div>
                 <section style={{maxWidth:"769px"}}>
                     <div className="text-center d-grid gap-4 px-4 position-relative">
-                        <Button variant="primary" className="h-100" onClick={() => navigate("/buscar-turno")}>QUIERO OFRECER SERVICIOS</Button>
+                        <Button variant="primary" className="h-100" onClick={() => navigate("/mis-negocios")}>QUIERO OFRECER SERVICIOS</Button>
                         <Button variant="outline-primary" className="h-100" onClick={() => navigate("/buscar-turno")}>QUIERO BUSCAR UN TURNO</Button>
                     </div>
                 </section>

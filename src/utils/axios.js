@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-let api = "http://localhost:3001/";
+let api = process.env.REACT_APP_BACKEND_PATH;
 let headers = {'Content-Type': 'application/json'}
 
 export function get(query, token=null, callback) {

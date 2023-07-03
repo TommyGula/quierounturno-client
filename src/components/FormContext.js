@@ -11,7 +11,7 @@ const FormContext = (props) => {
         const body = props.body;
         props.setSubmited(true);
         validateForm(body, () => {
-            fetch("http://localhost:3001/" + props.postContext, {
+            fetch(process.env.REACT_APP_BACKEND_PATH + props.postContext, {
                 method:props.method,
                 headers:{ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + props.token },
                 body:JSON.stringify(body)

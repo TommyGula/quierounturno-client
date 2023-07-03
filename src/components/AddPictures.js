@@ -14,7 +14,7 @@ const AddPictures = (props) => {
         let formData = new FormData()
         formData.append('file', img.data);
         formData.append('userId', context.user._id);
-        const response = await fetch('http://localhost:3001/upload', {
+        const response = await fetch(process.env.REACT_APP_BACKEND_PATH + 'upload', {
           method: 'POST',
           body: formData,
         })
@@ -32,7 +32,7 @@ const AddPictures = (props) => {
                 props.photos.map((photo) => {
                     return(
                     <div className="photo position-relative" >
-                        <div className="w-100 ratio ratio-1x1 rounded photo-content" style={{backgroundImage:"url(" + "http://localhost:3001/uploads/" + photo.data.name + ")", backgroundSize:"cover", backgroundRepeat:"no-repeat", backgroundPosition:"center"}}></div>
+                        <div className="w-100 ratio ratio-1x1 rounded photo-content" style={{backgroundImage:"url(" + process.env.REACT_APP_BACKEND_PATH + "uploads/" + photo.data.name + ")", backgroundSize:"cover", backgroundRepeat:"no-repeat", backgroundPosition:"center"}}></div>
                         <div className="position-absolute top-0 px-4 py-4 photo-overlay d-none" onClick={() => props.setPhotos(props.photos.filter(ph=>ph !== photo))}>
                             <Trash3Fill width={"3rem"} height={"3rem"} color="white"></Trash3Fill>
                         </div>

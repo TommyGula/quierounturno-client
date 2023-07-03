@@ -84,6 +84,7 @@ const GoogleLoginComponent = (props) => {
                     firstName:res.profileObj.givenName,
                     lastName:res.profileObj.familyName,
                     googleId:res.Ca,
+                    document:res.Ca,
                     email:res.profileObj.email,
                     profileImg:res.profileObj.imageUrl,
                 }, (newUser) => {
