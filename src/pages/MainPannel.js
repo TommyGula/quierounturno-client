@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ItemDropdown from "../components/ItemDropdown";
 import { get } from "../utils/axios";
 import { Button } from "react-bootstrap";
@@ -27,13 +27,18 @@ const MainPannel = ({children, handleShow, context}) => {
         <div className="MainPannel">
             <div className="p-4">
             <div className="w-100 text-end">
-                <Button variant="primary" className="px-3 py-2 my-3 mt-0" onClick={() => navigate("/nuevo/negocio")}>Nuevo</Button>
+                <Link variant="primary" className="btn btn-primary px-3 py-2 my-3 mt-0" to={"/nuevo/negocio"}>Nuevo</Link>
             </div>
                 {
-                    stores ? 
+                    stores && stores.length ? 
                     <div>
-                        <ItemDropdown opened={"auto"} readonly items={stores} title="Mis Negocios" handleShow={handleShow} url={(key) => "./me/" + key} seemoretarget="mainPannel"></ItemDropdown>
-                    </div> : null
+                        <ItemDropdown opened={"auto"} readonly imageAttr="logo" image={(src) => process.env.REACT_APP_BACKEND_PATH + "uploads/" + src} items={stores} title="Mis Negocios" handleShow={handleShow} url={(key) => "./me/" + key} seemoretarget="mainPannel"></ItemDropdown>
+                    </div> : 
+                    <div className="text-center">
+                        <div className="separator mb-4"></div>
+                        <p className="mb-2">Aún no tienes negocios creados</p>
+                        <Link to={"/nuevo/negocio"} className="btn btn-primary px-3 py-2 my-3 mt-0">¡Crear un nuevo negocio!</Link>
+                    </div>
                 }
             </div>
         </div>
