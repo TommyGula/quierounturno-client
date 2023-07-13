@@ -51,7 +51,7 @@ const App = () => {
             <Route path="/:companyId" element={<PageContext private><UserStore /></PageContext>} />
             <Route path="/buscar-turno" element={<PageContext private><Search /></PageContext>} />
             <Route path="/agendar/:id" element={<PageContext private><QuieroUnTurno /></PageContext>} />
-            <Route path="/auth/mp" element={<PaymentMethodConfirmation />} />
+            <Route path="/auth/mp" element={<PageContext private><PaymentMethodConfirmation /></PageContext>} />
           </Routes>
         </Container>
       </BrowserRouter>
