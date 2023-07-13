@@ -19,7 +19,7 @@ const PaymentMethodConfirmation = ({handleShow}) => {
     },[]);
 
     const handleAuthMP = () => {
-        post("auth/mp", {
+        post("users/auth/mp", {
             "code":code,
             "state":state
         }, (data) => {
