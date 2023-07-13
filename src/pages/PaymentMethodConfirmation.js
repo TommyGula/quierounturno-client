@@ -19,7 +19,7 @@ const PaymentMethodConfirmation = ({handleShow}) => {
     },[]);
 
     const handleAuthMP = () => {
-        post(process.env.REACT_APP_BACKEND_PATH + "auth/mp", {
+        post("auth/mp", {
             "code":code,
             "state":state
         }, (data) => {
