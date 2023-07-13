@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Spinner from "../components/Spinner";
 import { post } from "../utils/axios";
 
-const PaymentMethodConfirmation = ({handleShow}) => {
+const PaymentMethodConfirmation = ({handleShow, context}) => {
     const searchParams = new URLSearchParams(document.location.search)
     const code = searchParams.get("code");
     const state = searchParams.get("state");
@@ -11,6 +11,7 @@ const PaymentMethodConfirmation = ({handleShow}) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        console.log(code, state)
         if (!code || !state) {
             setResponse("No code or state was sent");
         } else {
@@ -19,7 +20,7 @@ const PaymentMethodConfirmation = ({handleShow}) => {
     },[]);
 
     const handleAuthMP = () => {
-        post("users/auth/mp", {
+        post("users/auth/mp", context.token, {
             "code":code,
             "state":state
         }, (data) => {
