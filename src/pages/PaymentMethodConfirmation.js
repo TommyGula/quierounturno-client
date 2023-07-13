@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import Spinner from "../components/Spinner";
 import { post } from "../utils/axios";
 
 const PaymentMethodConfirmation = ({handleShow}) => {
-    const { code, state } = useParams();
+    const searchParams = new URLSearchParams(document.location.search)
+    const code = searchParams.get("code");
+    const state = searchParams.get("state");
     const [isConfirmed, setIsConfirmed] = useState(false);
     const [response, setResponse] = useState({});
     const [loading, setLoading] = useState(true);
