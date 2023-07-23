@@ -16,8 +16,9 @@ import ItemDropdown from '../components/ItemDropdown';
 import InnerSelect from '../components/InnerSelect';
 import ListItem from '../components/ListItem';
 import { get } from '../utils/axios';
+import MercadoPago from '../assets/mercadopago.png';
 
-const steps = ['Servicio', 'Día y hora', 'Medio de pago'];
+const steps = ['Servicio', 'Día y hora', 'Pago'];
 
 export default function QuieroUnTurno({context, navigate, handleAlertShow}) {
   const days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
@@ -275,9 +276,41 @@ export default function QuieroUnTurno({context, navigate, handleAlertShow}) {
                   }
                 </div>
         )
-      case 3:
+      case 2:
         return(
-          <div className="switch-tab" style={{display:(activeStep === 2 ? "block" : "none")}}>Step 3</div>
+          <div className="switch-tab" style={{display:(activeStep === 2 ? "block" : "none")}}>
+            <h3 className="title">Verifica que todo esté bien</h3>
+            <div className="summary py-4">
+              <div className="mb-5">
+                <table className='table'>
+                  <tbody>
+                    <tr>
+                      <th>Servicio</th>
+                      <td>{context.appointment.service.name}</td>
+                    </tr>
+                    <tr>
+                      <th>Día y horario</th>
+                      <td>{new Date(context.appointment.date).toLocaleDateString("es-AR", { weekday: 'long', month: 'long', day: 'numeric', hour: 'numeric', minute:'numeric' })}</td>
+                    </tr>
+                    <tr>
+                      <th>Duración</th>
+                      <td>{context.appointment.service.minutesLength} minutos</td>
+                    </tr>
+                    <tr></tr>
+                    <tr className='table-primary'>
+                      <th>Total a pagar:</th>
+                      <th>$ {context.appointment.service.price}</th>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <h3 className="title">Selecciona cómo vas a pagar</h3>
+              <div className="d-flex g-4">
+                <div className={"currency h-100 " + "selectedCurrency"} style={{width:"130px"}}><img className='w-100' src={MercadoPago} alt="Pagar con MercadoPago" /></div>
+                <div className={"currency h-100 " + "selectedCurrency"} style={{width:"130px"}}><p className='mb-0'>Efectivo</p></div>
+              </div>
+            </div>
+          </div>
         )
     }
   }
