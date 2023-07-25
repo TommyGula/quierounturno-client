@@ -27,13 +27,21 @@ const Search = ({context}) => {
         if (input) {
             setResults([]);
             setLoading(true);
-            get("businesses?equal=0&name=" + encodeInput(input), context.token, (businessResult) => {
+            get("businesses?equal=0&paymentMethodActive=true&name=" + encodeInput(input), context.token, (businessResult) => {
                 if (businessResult && businessResult.length) {
-                    setResults(results => [...results, businessResult[0]]);
+                    businessResult.reduce((r,a) => {
+                        setResults(results => [...results, a]);
+                        return r;
+                    })
                 };
-                get("services?equal=0&name=" + encodeInput(input), context.token, (servicesResult) => {
+                get("services?equal=0&paymentMethodActive=true&name=" + encodeInput(input), context.token, (servicesResult) => {
                     if (servicesResult && servicesResult.length) {
-                        setResults(results => [...results, servicesResult[0]]);
+                        servicesResult.reduce((r,a) => {
+                            a["logo"] = a["photos"][0];
+                            a["_id"] = a["companyId"];
+                            setResults(results => [...results, a]);
+                            return r;
+                        })
                         setLoading(false);
                     } else {
                         setLoading(false);
@@ -73,7 +81,7 @@ const Search = ({context}) => {
                                         <img src={NotResults} alt="" className="" style={{maxWidth:"130px"}} />
                                         <h6 className="mt-4">No se encontraron resultados para tu búsqueda.</h6>
                                     </div> :
-                                    <ItemDropdown readonly items={results} name="name" title="Mis Resultados" seemoretarget="searchBox"></ItemDropdown>
+                                    <ItemDropdown image={(src) => process.env.REACT_APP_BACKEND_PATH + "uploads/" + src} imageAttr="logo" readonly items={results} name="name" title="Mis Resultados" seemoretarget="searchBox"></ItemDropdown>
                                 }
                             </div>
                         }

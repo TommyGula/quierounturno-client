@@ -243,7 +243,7 @@ const UserStore = ({ context, navigate, handleShow, copyToClipboard, createDate 
                         </div>
                     </div>
                     <div className="">
-                        <ItemDropdown items={services} title="Servicios" seemoretarget={pageName + "2"} readonly ctaText="SOLICITAR" handleShow={handleShow}></ItemDropdown>
+                        <ItemDropdown image={(src) => process.env.REACT_APP_BACKEND_PATH + "uploads/" + src[0]} imageAttr="photos" items={services} title="Servicios" seemoretarget={pageName + "2"} readonly ctaText="SOLICITAR" handleShow={handleShow}></ItemDropdown>
                     </div>    
                     <div className="mt-0">
                         <div className="w-100 text-center">

@@ -11,5 +11,5 @@ export function get(query, token=null, callback) {
 };
 
 export function post(query, token=null, body, callback) {
-    axios.post(api + query, body, {headers:headers}).then(response=>callback(response.data));
+    axios.post(api + query, body, {headers:headers}).then(response=>callback(response.data)).catch(err=>callback(err));
 };

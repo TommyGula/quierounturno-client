@@ -15,8 +15,11 @@ import Spinner from '../components/Spinner';
 import ItemDropdown from '../components/ItemDropdown';
 import InnerSelect from '../components/InnerSelect';
 import ListItem from '../components/ListItem';
-import { get } from '../utils/axios';
+import { get, post } from '../utils/axios';
+import Currency from '../components/Currency';
 import MercadoPago from '../assets/mercadopago.png';
+import Cash from '../assets/cash.png';
+import { Link } from 'react-router-dom';
 
 const steps = ['Servicio', 'Día y hora', 'Pago'];
 
@@ -25,11 +28,12 @@ export default function QuieroUnTurno({context, navigate, handleAlertShow}) {
   const [activeStep, setActiveStep] = useState(context.appointment.step || 0);
   const [skipped, setSkipped] = useState(new Set());
   const [employees, setEmployees] = useState([]);
-  const [filteredEmployees, setFilteredEmployees] = useState(context.appointment.employee ? [context.appointment.employee] : null);
+  const [filteredEmployees, setFilteredEmployees] = useState(context.appointment.employees ? context.appointment.employees : null);
   const [services, setServices] = useState([]);
   const [selectedDay, setSelectedDay] = useState(context.appointment.date ? new Date(context.appointment.date) : null);
   const [selectedTimeRange, setSelectedTimeRange] = useState(context.appointment.timeRange || 0);
   const [store, setStore] = useState(null);
+  const [selectedCurrency, setSelectedCurrency] = useState(0);
   const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -49,14 +53,50 @@ export default function QuieroUnTurno({context, navigate, handleAlertShow}) {
         }
       },
       1: function(context, next) {
-        if (context.appointment.timeRange && context.appointment.employee) {
+        if (context.appointment.timeRange && context.appointment.employees.length) {
           next();
         } else {
-          handleAlertShow("Debe seleccionar un horario y profesional para su turno");
+          handleAlertShow("Debe seleccionar un horario y profesional para su turno", "error");
         }
       },
-      2: function() {
-    
+      2: function(context, next) {
+        if (context.appointment.paymentMethod && selectedCurrency === 1) {
+          const preferenceBody = [
+            {
+              title:context.appointment.service.name,
+              description:context.appointment.service.description,
+              picture_url:process.env.REACT_APP_BACKEND_PATH + "uploads/" + store.logo,
+              quantity:1,
+              currency_id:(context.appointment.service.currencyId || "$"),
+              unit_price:context.appointment.service.price
+            }
+          ];
+          console.log(preferenceBody);
+          //post("preferences", context.token, )
+        } else if (context.appointment.paymentMethod && selectedCurrency === 2) {
+          const toTime = new Date(new Date(context.appointment.date).getTime() + parseInt(context.appointment.service.minutesLength)*1*60000);
+          const appointmentBody = {
+            companyId: context.appointment.companyId,
+            employeeId: context.appointment.employees,
+            serviceId: context.appointment.service._id,
+            createdBy: context.user._id,
+            createdAt: new Date().toISOString(),
+            date: context.appointment.date,
+            from: context.appointment.date,
+            to: toTime.toISOString(),
+            taken: true,
+            takenBy: context.user._id
+          };
+          post('appointments', context.token, appointmentBody, (res) => {
+            if (!res.message) {
+              next();
+            } else {
+              handleAlertShow(res.message, "error");
+            }
+          })
+        } else {
+          handleAlertShow("Debe seleccionar un método de pago", "error");
+        };
       },
     };
 
@@ -128,6 +168,7 @@ export default function QuieroUnTurno({context, navigate, handleAlertShow}) {
   };
 
   const handleBack = () => {
+    context.buildAppointment("step", activeStep - 1);
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
@@ -138,6 +179,7 @@ export default function QuieroUnTurno({context, navigate, handleAlertShow}) {
       throw new Error("You can't skip a step that isn't optional.");
     }
 
+    context.buildAppointment("step", activeStep + 1);
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
     setSkipped((prevSkipped) => {
       const newSkipped = new Set(prevSkipped.values());
@@ -265,7 +307,7 @@ export default function QuieroUnTurno({context, navigate, handleAlertShow}) {
                                   {
                                       filteredEmployees.map(employee => {
                                           return(
-                                            <ListItem key={filteredEmployees.indexOf(employee)} name={employee.firstName} add={() => context.buildAppointment("employee", employee)} remove={() => context.buildAppointment("employee", null)} selected={context.appointment.employee ? context.appointment.employee._id === employee._id : false} lastName={employee.lastName} id={employee._id}></ListItem>
+                                            <ListItem key={filteredEmployees.indexOf(employee)} name={employee.firstName} add={() => context.buildAppointment("employees", [... (context.appointment.employees || []), employee])} remove={() => context.buildAppointment("employees", [])} selected={context.appointment.employees ? (context.appointment.employees || []).includes(employee) : false} lastName={employee.lastName} id={employee._id}></ListItem>
                                           )
                                       })
                                   }
@@ -306,8 +348,18 @@ export default function QuieroUnTurno({context, navigate, handleAlertShow}) {
               </div>
               <h3 className="title">Selecciona cómo vas a pagar</h3>
               <div className="d-flex g-4">
-                <div className={"currency h-100 " + "selectedCurrency"} style={{width:"130px"}}><img className='w-100' src={MercadoPago} alt="Pagar con MercadoPago" /></div>
-                <div className={"currency h-100 " + "selectedCurrency"} style={{width:"130px"}}><p className='mb-0'>Efectivo</p></div>
+                <div onClick={() => {
+                  setSelectedCurrency(1);
+                  context.buildAppointment("paymentMethod", 1);
+                }}>
+                  <Currency selected={selectedCurrency === 1} ticker="MercadoPago" img={MercadoPago}></Currency>
+                </div>
+                <div onClick={() => {
+                  setSelectedCurrency(2);
+                  context.buildAppointment("paymentMethod", 2);
+                }}>
+                  <Currency selected={selectedCurrency === 2} ticker="Efectivo" img={Cash}></Currency>
+                </div>
               </div>
             </div>
           </div>
@@ -366,12 +418,24 @@ export default function QuieroUnTurno({context, navigate, handleAlertShow}) {
       </Stepper>
       {activeStep === steps.length ? (
         <React.Fragment>
-          <Typography sx={{ mt: 2, mb: 1 }}>
-            All steps completed - you&apos;re finished
-          </Typography>
+          <div className="switch-container pt-4 pb-0">
+            <div className="switch-tab">
+              <h3 className='title mb-3'>¡Tu turno fue agendado con éxito!</h3>
+              <p>Ve a la agenda para revisar que esté todo bien, modificar o cancelar tu turno.</p>
+            </div>
+          </div>
           <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
             <Box sx={{ flex: '1 1 auto' }} />
-            <Button onClick={handleReset}>Nuevo turno</Button>
+            <Button
+              color="inherit"
+              disabled={activeStep === 0}
+              onClick={handleBack}
+              sx={{ mr: 1 }}
+            >
+              Atrás
+            </Button>
+            <Link className='MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-1e6y48t-MuiButtonBase-root-MuiButton-root me-3' to={'/mi-agenda'}>Ver agenda</Link>
+            <Link className='MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-1e6y48t-MuiButtonBase-root-MuiButton-root' to={'/buscar-turno'}>Nuevo turno</Link>
           </Box>
         </React.Fragment>
       ) : (

@@ -35,7 +35,7 @@ const GlobalState = ({children}) => {
     };
 
     const initAppointment = (companyId) => {
-        setAppointment({companyId:companyId, expiry:new Date().getTime() + 60});
+        setAppointment({companyId:companyId, expiry:new Date().getTime() + 60, employees:[]});
         setIsAppointmentSet(true);
 
         localStorage.setItem("appointment", JSON.stringify({companyId:companyId, expiry:new Date().getTime() + 60}));
@@ -43,7 +43,6 @@ const GlobalState = ({children}) => {
     };
 
     const buildAppointment = (name, value) => {
-        console.log(name, value)
         setAppointment({...appointment, [name]:value});
         localStorage.setItem("appointment", JSON.stringify({...appointment, [name]:value}));
     }
