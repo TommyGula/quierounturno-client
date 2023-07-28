@@ -7,7 +7,7 @@ import Agenda from "../components/Agenda";
 
 
 const UserAgenda = ({context}) => {
-    const [agenda, setAgenda] = useState(null);
+    const [agenda, setAgenda] = useState([]);
     const [loading, setLoading] = useState(true);
 
     const schedulerData = [
@@ -19,10 +19,47 @@ const UserAgenda = ({context}) => {
         getAgenda();
     },[]);
 
+    const getRelatedServiceAndStore = (companyId, serviceId) => {
+        return new Promise((res, rej) => {
+            get("businesses/" + companyId + "?project=name=1", context.token, (companyName) => {
+                get("services/" + serviceId + "?project=name=1", context.token, (serviceName) => {
+                    if (companyName.length && serviceName.length) {
+                        res({service:serviceName[0].name, company:companyName[0].name});
+                    } else {
+                        rej({service:"", company:""})
+                    }
+                });
+            });
+        })
+    };
+
     const getAgenda = () => {
         get("appointments/?takenBy=" + context.user._id, context.token, (data) => {
-            setAgenda(data);
-            setLoading(false);
+            if (data.length) {
+                const myAgenda = data.reduce((r,a) => {
+                    var t = {};
+                    var itemNames = getRelatedServiceAndStore(a.companyId, a.serviceId);
+                    itemNames.then((names) => {
+                        t["startDate"] = a.from.split(".")[0];
+                        t["endDate"] = a.to.split(".")[0];
+                        t["title"] = names.company + " - " + names.service;
+                        r.push(t);
+                        setAgenda(agenda => [... agenda, t]);
+                        return r;
+                    }).catch((err) => {
+                        r.push(t);
+                        setAgenda(agenda => [... agenda, t]);
+                        return r;
+                    })
+                },[]);
+
+                setTimeout(() => {
+                    setLoading(false);
+                }, 500)
+            } else {
+                setAgenda([]);
+                setLoading(false);
+            }
         });
     };
 

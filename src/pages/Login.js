@@ -36,6 +36,7 @@ const Login = () => {
     };
 
     const handleSubmit = () => {
+        setLoading(true);
         if (form.password && form.email) {
             fetch(process.env.REACT_APP_BACKEND_PATH + "users/login", {
                 method:"POST",
@@ -48,10 +49,12 @@ const Login = () => {
             .then(res=>res.json())
             .then(data=>{
                 context.login(data.user, data.accessToken, function() {
+                    setLoading(false);
                     handleShow("Inicio de sesión exitoso", "¡Bienvenido " + data.user.firstName + "!");
                 });
             })
             .catch(err=>{
+                setLoading(false);
                 handleShow("Ha ocurrido un error", err.message);
             })
         }

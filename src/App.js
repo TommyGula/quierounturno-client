@@ -29,12 +29,14 @@ import UserAgenda from "./pages/UserAgenda";
 import Navbar from "./components/Navbar";
 import PageContext from "./components/PageContext";
 import PaymentMethodConfirmation from "./pages/PaymentMethodConfirmation";
+import MyErrorBoundary from "./components/MyErrorBoundary";
 
 const App = () => {
   return(
     <GlobalState>
       <BrowserRouter>
         <Navbar/>
+        <MyErrorBoundary>
         <Container className="container-class">
           <Routes>
             <Route path="/" element={<Home />} />
@@ -52,10 +54,11 @@ const App = () => {
             <Route path="/:companyId" element={<PageContext private><UserStore /></PageContext>} />
             <Route path="/buscar-turno" element={<PageContext private><Search /></PageContext>} />
             <Route path="/agendar/:id" element={<PageContext private><QuieroUnTurno /></PageContext>} />
-            <Route path="/mi-agenda" element={<PageContext private><UserAgenda/></PageContext>} />
+            <Route path="/mis-turnos" element={<PageContext private><UserAgenda/></PageContext>} />
             <Route path="/auth/mp" element={<PageContext private><PaymentMethodConfirmation /></PageContext>} />
           </Routes>
         </Container>
+        </MyErrorBoundary>
       </BrowserRouter>
     </GlobalState>
   );

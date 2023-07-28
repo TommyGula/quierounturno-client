@@ -386,6 +386,10 @@ input[type=number] {
   transform: scale(105%);
 }
 
+.currency {
+  cursor: pointer;
+}
+
 .selectedCurrency {
   border: 3px solid black;
 }

@@ -16,9 +16,9 @@ const GlobalState = ({children}) => {
         };
         localStorage.setItem('token', token);
         setToken(token);
-        if (user.googleId) {
+/*         if (user.googleId) {
             user._id = user.googleId;
-        };
+        }; */
         localStorage.setItem('user', JSON.stringify(user));
         setUser(user);
         getBusinesses(user._id, token);

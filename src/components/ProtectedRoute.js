@@ -15,6 +15,7 @@ const ProtectedRoute = ({ children }) => {
         })
         .then(res=>res.json())
         .then(user=>{
+            console.log("This is auth ", user)
             if (user.status === 401) {
                 context.logout();
                 cb(false);

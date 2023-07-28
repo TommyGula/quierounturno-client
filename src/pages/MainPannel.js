@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ItemDropdown from "../components/ItemDropdown";
 import { get } from "../utils/axios";
-import { Button } from "react-bootstrap";
 import Spinner from "../components/Spinner";
 
 const MainPannel = ({children, handleShow, context}) => {
@@ -41,7 +40,7 @@ const MainPannel = ({children, handleShow, context}) => {
                         <div className="text-center">
                             <div className="separator mb-4"></div>
                             <p className="mb-2">Aún no tienes negocios creados</p>
-                            <Link to={"/nuevo/negocio"} className="btn btn-primary px-3 py-2 my-3 mt-0">¡Crear un nuevo negocio!</Link>
+                            <Link to={"/nuevo/negocio"} className="btn btn-primary px-3 py-2 my-3 mt-0">¡Crea tu primer negocio!</Link>
                         </div>
                     }
                 </div>

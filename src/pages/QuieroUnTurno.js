@@ -305,11 +305,11 @@ export default function QuieroUnTurno({context, navigate, handleAlertShow}) {
                               filteredEmployees ? 
                               <div>
                                   {
-                                      filteredEmployees.map(employee => {
-                                          return(
-                                            <ListItem key={filteredEmployees.indexOf(employee)} name={employee.firstName} add={() => context.buildAppointment("employees", [... (context.appointment.employees || []), employee])} remove={() => context.buildAppointment("employees", [])} selected={context.appointment.employees ? (context.appointment.employees || []).includes(employee) : false} lastName={employee.lastName} id={employee._id}></ListItem>
-                                          )
-                                      })
+                                    filteredEmployees.map(employee => {
+                                        return(
+                                          <ListItem key={filteredEmployees.indexOf(employee)} name={employee.firstName} add={() => context.buildAppointment("employees", [... (context.appointment.employees || []), employee])} remove={() => context.buildAppointment("employees", [])} selected={context.appointment.employees ? (context.appointment.employees || []).includes(employee) : false} lastName={employee.lastName} id={employee._id}></ListItem>
+                                        )
+                                    })
                                   }
                               </div> : null
                           }
@@ -434,7 +434,7 @@ export default function QuieroUnTurno({context, navigate, handleAlertShow}) {
             >
               Atrás
             </Button>
-            <Link className='MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-1e6y48t-MuiButtonBase-root-MuiButton-root me-3' to={'/mi-agenda'}>Ver agenda</Link>
+            <Link className='MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-1e6y48t-MuiButtonBase-root-MuiButton-root me-3' to={'/mis-turnos'}>Ver agenda</Link>
             <Link className='MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-1e6y48t-MuiButtonBase-root-MuiButton-root' to={'/buscar-turno'}>Nuevo turno</Link>
           </Box>
         </React.Fragment>
