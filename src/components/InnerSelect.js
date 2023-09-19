@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { MenuItem, Select, InputLabel, FormControl } from '@mui/material';
 
-const InnerSelect = ({selectedDay, buildDailySchedule,selectedTimeRange, onChange, days}) => {
-    const [dailySchedule, setDailySchedule] = useState(null);
+const InnerSelect = ({selectedDay, buildDailySchedule,selectedTimeRange, onChange, days, dailySchedule, setDailySchedule}) => {
 
     useEffect(() => {
         if (selectedDay) {

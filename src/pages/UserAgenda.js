@@ -39,18 +39,12 @@ const UserAgenda = ({context}) => {
                 const myAgenda = data.reduce((r,a) => {
                     var t = {};
                     var itemNames = getRelatedServiceAndStore(a.companyId, a.serviceId);
-                    itemNames.then((names) => {
-                        t["startDate"] = a.from.split(".")[0];
-                        t["endDate"] = a.to.split(".")[0];
-                        t["title"] = names.company + " - " + names.service;
-                        r.push(t);
-                        setAgenda(agenda => [... agenda, t]);
-                        return r;
-                    }).catch((err) => {
-                        r.push(t);
-                        setAgenda(agenda => [... agenda, t]);
-                        return r;
-                    })
+                    t["startDate"] = a.from.split(".")[0];
+                    t["endDate"] = a.to.split(".")[0];
+                    t["title"] = a.name;
+                    r.push(t);
+                    setAgenda([... agenda, t]);
+                    return r;
                 },[]);
 
                 setTimeout(() => {

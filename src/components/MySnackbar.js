@@ -3,9 +3,6 @@ import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 
 const MySnackbar = (props) => {
-    useEffect(() => {
-        console.log(props)
-    });
     const handleClose = (e) => {
         props.setAlertShow(false);
     };

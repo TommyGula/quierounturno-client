@@ -38,7 +38,7 @@ const Search = ({context}) => {
                     if (servicesResult && servicesResult.length) {
                         servicesResult.reduce((r,a) => {
                             a["logo"] = a["photos"][0];
-                            a["_id"] = a["companyId"];
+                            a["_id"] = a["companyId"] + "?companyAppointment=" + a["companyId"] + "&serviceAppointment=" + a["_id"];
                             setResults(results => [...results, a]);
                             return r;
                         })

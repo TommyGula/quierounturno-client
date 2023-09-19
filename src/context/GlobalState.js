@@ -42,9 +42,12 @@ const GlobalState = ({children}) => {
         localStorage.setItem("appointmentIsSet", JSON.stringify({value:true, expiry:new Date().getTime() + 60}));
     };
 
-    const buildAppointment = (name, value) => {
+    const buildAppointment = (name, value, cb) => {
         setAppointment({...appointment, [name]:value});
         localStorage.setItem("appointment", JSON.stringify({...appointment, [name]:value}));
+        if (cb) {
+            cb();
+        };
     }
 
     const getBusinesses = (userId, token) => {

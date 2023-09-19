@@ -20,10 +20,13 @@ import Currency from '../components/Currency';
 import MercadoPago from '../assets/mercadopago.png';
 import Cash from '../assets/cash.png';
 import { Link } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 
 const steps = ['Servicio', 'Día y hora', 'Pago'];
 
 export default function QuieroUnTurno({context, navigate, handleAlertShow}) {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const service = searchParams.get("service");
   const days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
   const [activeStep, setActiveStep] = useState(context.appointment.step || 0);
   const [skipped, setSkipped] = useState(new Set());
@@ -32,8 +35,10 @@ export default function QuieroUnTurno({context, navigate, handleAlertShow}) {
   const [services, setServices] = useState([]);
   const [selectedDay, setSelectedDay] = useState(context.appointment.date ? new Date(context.appointment.date) : null);
   const [selectedTimeRange, setSelectedTimeRange] = useState(context.appointment.timeRange || 0);
+
   const [store, setStore] = useState(null);
   const [selectedCurrency, setSelectedCurrency] = useState(0);
+  const [dailySchedule, setDailySchedule] = useState(null);
   const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -60,40 +65,46 @@ export default function QuieroUnTurno({context, navigate, handleAlertShow}) {
         }
       },
       2: function(context, next) {
-        if (context.appointment.paymentMethod && selectedCurrency === 1) {
-          const preferenceBody = [
-            {
-              title:context.appointment.service.name,
-              description:context.appointment.service.description,
-              picture_url:process.env.REACT_APP_BACKEND_PATH + "uploads/" + store.logo,
-              quantity:1,
-              currency_id:(context.appointment.service.currencyId || "$"),
-              unit_price:context.appointment.service.price
-            }
-          ];
-          console.log(preferenceBody);
-          //post("preferences", context.token, )
-        } else if (context.appointment.paymentMethod && selectedCurrency === 2) {
-          const toTime = new Date(new Date(context.appointment.date).getTime() + parseInt(context.appointment.service.minutesLength)*1*60000);
-          const appointmentBody = {
-            companyId: context.appointment.companyId,
-            employeeId: context.appointment.employees,
-            serviceId: context.appointment.service._id,
-            createdBy: context.user._id,
-            createdAt: new Date().toISOString(),
-            date: context.appointment.date,
-            from: context.appointment.date,
-            to: toTime.toISOString(),
-            taken: true,
-            takenBy: context.user._id
-          };
-          post('appointments', context.token, appointmentBody, (res) => {
-            if (!res.message) {
-              next();
-            } else {
-              handleAlertShow(res.message, "error");
-            }
-          })
+        if (context.appointment.paymentMethod) {
+          const weekDay = new Date(context.appointment.date).getDay();
+          const dayTimeRange = getDateWithTimeRanges(days[weekDay], context.appointment.timeRange);
+          console.log("DAY TIME RANGE ",dayTimeRange)
+  
+          if (selectedCurrency === 1) {
+            const preferenceBody = [
+              {
+                title:context.appointment.service.name,
+                description:context.appointment.service.description,
+                picture_url:process.env.REACT_APP_BACKEND_PATH + "uploads/" + store.logo,
+                quantity:1,
+                currency_id:(context.appointment.service.currencyId || "$"),
+                unit_price:context.appointment.service.price
+              }
+            ];
+            //post("preferences", context.token, )
+          } else if (selectedCurrency === 2) {
+            const toTime = new Date(new Date(context.appointment.date).getTime() + parseInt(context.appointment.service.minutesLength)*1*60000);
+            const appointmentBody = {
+              name: context.appointment.service.name,
+              companyId: context.appointment.companyId,
+              employeeId: context.appointment.employees,
+              serviceId: context.appointment.service._id,
+              createdBy: context.user._id,
+              createdAt: new Date().toISOString(),
+              date: context.appointment.date,
+              from: dayTimeRange.from,
+              to: dayTimeRange.to,
+              taken: true,
+              takenBy: context.user._id
+            };
+            post('appointments', context.token, appointmentBody, (res) => {
+              if (!res.message) {
+                next();
+              } else {
+                handleAlertShow(res.message, "error");
+              }
+            });
+          }
         } else {
           handleAlertShow("Debe seleccionar un método de pago", "error");
         };
@@ -142,6 +153,15 @@ export default function QuieroUnTurno({context, navigate, handleAlertShow}) {
     const getServices = () => {
         get("services?companyId=" + context.appointment.companyId, context.token, (resServices) => {
             setServices(resServices);
+            if (service) {
+              resServices.reduce((r,a) => {
+                if (a._id === service) {
+                  context.buildAppointment("service", a);
+                  //handleNext();
+                };
+                return r;
+              },[]);
+            };
         });
     };
 
@@ -213,7 +233,37 @@ export default function QuieroUnTurno({context, navigate, handleAlertShow}) {
 
       return r;
     },[])
-};
+  };
+
+  const getDateWithTimeRanges = (day, timeRange) => {
+    const duration = context.appointment.service.minutesLength;
+    return context.appointment.service.schedule[day].reduce((r,a) => {
+      let from = new Date(a.from);
+      let to = new Date(a.to);
+
+      let diff = Math.abs(to - from);
+      let minutes = Math.floor((diff/1000)/60);
+      let quantity = Math.floor(minutes/duration);
+
+      Array.from({ length: quantity }, (value, index) => index).reduce((r2,a2) => {
+        if (a2 + 2 === timeRange) {
+          let itemFrom = new Date(from.getTime() + duration*a2*60000);
+          let itemTo = new Date(from.getTime() + duration*(a2+1)*60000);
+  
+          let dateFrom = new Date(context.appointment.date).setHours(itemFrom.getHours(), itemFrom.getMinutes(), itemFrom.getSeconds());
+          let dateTo = new Date(context.appointment.date).setHours(itemTo.getHours(), itemTo.getMinutes(), itemTo.getSeconds());
+          r = {
+            from:new Date(dateFrom).toISOString(),
+            to:new Date(dateTo).toISOString()
+          }
+        } else {
+          return r2;
+        }
+      },{});
+
+      return r;
+    },{})
+  };
 
   const buildEmployeeDailySchedule = (day, employee) => {
     const duration = context.appointment.service.minutesLength;
@@ -285,24 +335,30 @@ export default function QuieroUnTurno({context, navigate, handleAlertShow}) {
                                 renderInput={(params) => <TextField {...params} />}
                                 value={context.appointment.date || selectedDay}
                                 onChange={(date) => {
-                                  setSelectedDay(new Date(date));
-                                  context.buildAppointment("date", new Date(date));
+                                  var today = new Date().getDate();
+                                  var selectedDate = new Date(date).getDate();
+                                  if (selectedDate > today) {
+                                    setSelectedDay(new Date(date));
+                                    context.buildAppointment("date", new Date(date));
+                                  } else {
+                                    handleAlertShow("No puedes seleccionar una fecha pasada", "error");
+                                  }
                                 }}
                             />
                         </Stack>
                     </LocalizationProvider>
                     </div>
                     <div>
-                      <InnerSelect selectedDay={selectedDay} selectedTimeRange={selectedTimeRange} buildDailySchedule={buildDailySchedule} onChange={handleRangeChange} days={days}></InnerSelect>
+                      <InnerSelect selectedDay={selectedDay} selectedTimeRange={selectedTimeRange} buildDailySchedule={buildDailySchedule} onChange={handleRangeChange} days={days} dailySchedule={dailySchedule} setDailySchedule={setDailySchedule}></InnerSelect>
                     </div>
                   </div>
                   {
-                    filteredEmployees ? 
+                    context.appointment.date && context.appointment.timeRange ? 
                     <div className='mt-5'>
                       <h3 className="title">Selecciona al profesional encargado</h3>
                       <ul className="team px-0 mt-3">
                           {
-                              filteredEmployees ? 
+                              filteredEmployees.length ? 
                               <div>
                                   {
                                     filteredEmployees.map(employee => {
@@ -311,7 +367,7 @@ export default function QuieroUnTurno({context, navigate, handleAlertShow}) {
                                         )
                                     })
                                   }
-                              </div> : null
+                              </div> : <p className='mb-0'>Lo sentimos. No hay profesionales disponibles para el día y horario seleccionados.</p>
                           }
                       </ul>
                     </div> : null
@@ -370,6 +426,7 @@ export default function QuieroUnTurno({context, navigate, handleAlertShow}) {
   const handleRangeChange = (val) => {
     setSelectedTimeRange(val);
     context.buildAppointment("timeRange", val);
+    //context.buildAppointment("employees", []);
     getFilteredEmployees(val);
   };
 

@@ -4,10 +4,13 @@ import MyModal from "../components/MyModal";
 import MySnackbar from "../components/MySnackbar";
 import ProtectedRoute from "./ProtectedRoute";
 import UserContext from "../context/UserContext";
-import { useParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 const PageContext = (props) => {
-    const { init_message } = useParams();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const init_message = searchParams.get("init_message");
+    const serviceAppointment = searchParams.get("serviceAppointment");
+    const companyAppointment = searchParams.get("companyAppointment");
     const navigate = useNavigate();
     const context = useContext(UserContext);
     const [show, setShow] = useState(false);
@@ -24,11 +27,14 @@ const PageContext = (props) => {
         if (init_message) {
             handleAlertShow(init_message.replace(/%20/g, " "), "success");
         };
+        if (serviceAppointment && companyAppointment) {
+            context.initAppointment(companyAppointment)
+            navigate("/agendar/" + companyAppointment + "?service=" + serviceAppointment);
+        }
     })
 
     const handleSeeMore = (e) => {
         let seemoretarget = e.target.getAttribute("seemoretarget");
-        console.log(seemoretarget)
         let height = document.getElementById("collapseSection" + seemoretarget).offsetHeight;
 
         if (!seeMore) {
