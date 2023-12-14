@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 import Agenda from "../components/Agenda";
 
 
-const MyAgenda = ({context}) => {
+const EmployeeAgenda = ({context}) => {
     const [agenda, setAgenda] = useState(null);
     const [loading, setLoading] = useState(true);
     const [services, setServices] = useState(null);
@@ -65,4 +65,4 @@ const MyAgenda = ({context}) => {
 
 };
 
-export default MyAgenda;
+export default EmployeeAgenda;

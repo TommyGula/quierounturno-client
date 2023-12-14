@@ -142,4 +142,24 @@ function slugName(name) {
 let name = "Datarex dinosaurios & Musica by: Tomas"
 //console.log(slugName(name))
 
-console.log(schemaToValue(scheduleSchema));
+const buildDailySchedule = (day) => {
+    const duration = context.appointment.service.minutesLength;
+    return context.appointment.service.schedule[day].reduce((r,a) => {
+      let from = new Date(a.from);
+      let to = new Date(a.to);
+
+      let diff = Math.abs(to - from);
+      let minutes = Math.floor((diff/1000)/60);
+      let quantity = Math.floor(minutes/duration);
+
+      Array.from({ length: quantity }, (value, index) => index).reduce((r2,a2) => {
+        let itemFrom = new Date(from.getTime() + duration*a2*60000);
+        let itemTo = new Date(from.getTime() + duration*(a2+1)*60000);
+
+        r.push({value:a2 + 1,range:itemFrom.toString().split(" ")[4] + " - " + itemTo.toString().split(" ")[4]});
+        return r2;
+      },[]);
+
+      return r;
+    },[])
+  };

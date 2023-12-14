@@ -1,18 +1,27 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import MyModal from "../components/MyModal";
-import MySnackbar from "../components/MySnackbar";
+import MyModal from "./MyModal";
+import MySnackbar from "./MySnackbar";
 import ProtectedRoute from "./ProtectedRoute";
 import UserContext from "../context/UserContext";
 import { useSearchParams } from "react-router-dom";
+import Spinner from "./Spinner";
 
-const PageContext = (props) => {
+const PageContext2 = (props) => {
+    // URL declarations
     const [searchParams, setSearchParams] = useSearchParams();
     const init_message = searchParams.get("init_message");
     const serviceAppointment = searchParams.get("serviceAppointment");
     const companyAppointment = searchParams.get("companyAppointment");
     const navigate = useNavigate();
+
+    // Context
     const context = useContext(UserContext);
+
+    // Page state
+    const [loading, setLoading] = useState(true);
+
+    // Page interactions
     const [show, setShow] = useState(false);
     const [redirect, setRedirect] = useState(null);
     const [modalTitle, setModalTitle] = useState(null);
@@ -81,58 +90,26 @@ const PageContext = (props) => {
         handleShow(title, message);
     };
 
-    const createDate = (date, time=false, sep=false, format="dd-mm-YYYY HH:MM:SS") => {
-        let day = date.getDay();
-        let month = date.getMonth();
-        let year = date.getYear();
-        
-        let finalDate = format.replace("YYYY", year).replace("mm", month).replace("dd", day);
+    const pageState = { loading, setLoading }
 
-        if (sep) {
-            finalDate.replace("-", sep);
-        }
-        if (time) {
-            let hour = date.getHours();
-            let minutes = addDigit(date.getMinutes(), 2, "0", true);
-            let seconds = addDigit(date.getSeconds(), 2, "0", true);
-
-            finalDate = finalDate.replace("HH", hour).replace("MM", minutes).replace("SS", seconds);
-        } else {
-            finalDate = finalDate.split(" ")[0];
-        };
-        
-        return finalDate;
-    };
-
-    const addDigit = (str, n, digit="0", left=false) => {
-        str = str.toString();
-        if (str.length < n) {
-            let newStr = str;
-            for (let i = 0; i < n - str.length; i++) {
-                if (left) {
-                    newStr = digit + newStr;
-                } else {
-                    newStr = newStr + digit;
-                };
-            };
-            return newStr;
-        } else {
-            return str;
-        }
-    }
+    const methods = { context, navigate, show, setShow, redirect, setRedirect, modalTitle, setModalTitle, modalDescription, setModalDescription, handleClose, handleShow, onPageError, handleAlertClose, handleAlertShow, handleSeeMore, seeMore, copyToClipboard, pageState:pageState };
 
     return(
         <div className="page-context mb-5">
             <MyModal title={modalTitle} description={modalDescription} show={show} onHide={handleClose} primary={"ACEPTAR"} handlePrimary={handleClose}></MyModal>
             <MySnackbar message={alertMessage} type={alertType} open={alertShow} setAlertShow={setAlertShow} duration={alertDuration}></MySnackbar>
             <div className={"mobile-container container py-4 " + props.containerClass}>
+                {
+                    !loading ? null
+                    : <Spinner></Spinner>
+                }
                 <div className={props.embed ? "" : "background"}>
                     {
                         props.private ?
                         <ProtectedRoute>
-                            {React.cloneElement(props.children, { context, navigate, show, setShow, redirect, setRedirect, modalTitle, setModalTitle, modalDescription, setModalDescription, handleClose, handleShow, onPageError, handleAlertClose, handleAlertShow, handleSeeMore, seeMore, copyToClipboard, createDate })}
+                            {React.cloneElement(props.children, methods)}
                         </ProtectedRoute> :
-                        React.cloneElement(props.children, { context, navigate, show, setShow, redirect, setRedirect, modalTitle, setModalTitle, modalDescription, setModalDescription, handleClose, handleShow, onPageError, handleAlertClose, handleAlertShow, handleSeeMore, seeMore, copyToClipboard, createDate })
+                        React.cloneElement(props.children, methods)
                     }
                 </div>
             </div>
@@ -140,4 +117,4 @@ const PageContext = (props) => {
     );
 };
 
-export default PageContext;
+export default PageContext2;

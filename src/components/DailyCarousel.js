@@ -1,6 +1,6 @@
 import React from "react";
 
-const MyDayCarousel = ({data}) => {
+const DailyCarousel = ({data}) => {
 
     return(
         <div className="daily-carousel">
@@ -9,4 +9,4 @@ const MyDayCarousel = ({data}) => {
     )
 };
 
-export default MyDayCarousel;
+export default DailyCarousel;

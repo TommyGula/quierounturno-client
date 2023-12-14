@@ -50,6 +50,14 @@ const GlobalState = ({children}) => {
         };
     }
 
+    const setAppointmentData = (data, cb) => {
+        setAppointment({...appointment, ...data});
+        localStorage.setItem("appointment", JSON.stringify({...appointment, ...data}));
+        if (cb) {
+            cb();
+        };
+    }
+
     const getBusinesses = (userId, token) => {
         get("businesses?createdBy=" + userId, token, (response) => {
             localStorage.setItem("businesses", response.length);
@@ -68,7 +76,8 @@ const GlobalState = ({children}) => {
             appointment,
             isAppointmentSet,
             initAppointment,
-            buildAppointment
+            buildAppointment,
+            setAppointmentData
         }}>
             {children}
         </UserContext.Provider>

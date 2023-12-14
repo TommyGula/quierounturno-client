@@ -5,7 +5,7 @@ import { Bell, BellFill, GearFill } from 'react-bootstrap-icons';
 import { CheckCircleFill, Search, ExclamationCircleFill } from "react-bootstrap-icons";
 import { Container, Button, Dropdown } from "react-bootstrap";
 
-import Logo from "../assets/QUT_Logo.png";
+import Logo from "./Logo";
 import User from "../assets/user.png";
 import UserContext from "../context/UserContext";
 
@@ -50,7 +50,10 @@ const Navbar = () => {
             </div>
             <Container className="container-class">
                 <div className="Navbar-content d-flex justify-content-between align-items-center py-2">
-                    <img src={Logo} style={{cursor:"pointer"}} alt="Quiero Un Turno" height={100} onClick={() => navigate("/")}/>
+                    <div className="main-logo pt-2" onClick={() => navigate("/")}>
+                        <Logo></Logo>
+                    </div>
+                    {/* <img src={Logo} style={{cursor:"pointer"}} alt="Quiero Un Turno" height={100} onClick={() => navigate("/")}/> */}
                     <div className="Navbar-content-cta ms-5 d-grid gap-2 gap-lg-3 d-lg-flex justify-content-end mt-2 mt-lg-0">
                         <div className="d-grid d-lg-flex gap-2 justify-content-end">
                             <Link variant="primary" className="btn btn-primary d-flex align-items-center f-700 mt-lg-2" to={(context.businesses && context.businesses !== 0 ? "/mis-negocios" : "/nuevo/negocio")}>{(context.businesses && context.businesses !== 0 ? "MIS NEGOCIOS" : "QUIERO OFRECER SERVICIOS")}</Link>{' '}

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import SectionTitle from "../components/SectionTitle";
-import Spinner from "../components/Spinner";
 import { Button } from "react-bootstrap";
 import Call from "../assets/call.svg";
 import { get } from "../utils/axios";
@@ -14,11 +13,12 @@ import MyGoogleMap from "../components/MyGoogleMap";
 import { Clipboard } from "react-bootstrap-icons";
 import {InputAdornment} from "@mui/material";
 import Share from "../assets/share.svg";
+import { handlePromises, days } from "../utils/helpers";
 
-const UserStore = ({ context, navigate, handleShow, copyToClipboard, createDate }) => {
+const UserStore = ({ context, navigate, handleShow, copyToClipboard, createDate, pageState }) => {
     const { companyId } = useParams();
     const pageName = "userStore";
-    const [loading, setLoading] = useState(true);
+
     const [profile, setProfile] = useState({});
     const [opened, setOpened] = useState(false);
     const [services, setServices] = useState([]);
@@ -30,9 +30,15 @@ const UserStore = ({ context, navigate, handleShow, copyToClipboard, createDate 
     const [closeTime, setCloseTime] = useState(0);
 
     useEffect(() => {
-        getStore();
-        getEmployees();
-        getServices();
+        handlePromises([
+            getStore(),
+            getEmployees(),
+            getServices(),
+        ]).then((values) => {
+            pageState.setLoading(false);
+        }).catch((err) => {
+            throw new Error(err.message);
+        })
     },[]);
 
     const getStore = () => {
@@ -40,8 +46,6 @@ const UserStore = ({ context, navigate, handleShow, copyToClipboard, createDate 
             if (store.length) {
                 setStore(store[0]);
                 checkIsOpen(store[0].schedule);
-                console.log(store[0])
-                setLoading(false);
             }
         });
     };
@@ -97,7 +101,6 @@ const UserStore = ({ context, navigate, handleShow, copyToClipboard, createDate 
     };
 
     const checkIsOpen = (schedules) => {
-        const days = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
         const date = new Date();
         const today = date.getDay()
         const daykey = days[today];
@@ -154,30 +157,13 @@ const UserStore = ({ context, navigate, handleShow, copyToClipboard, createDate 
 
     };
 
-    const schemaToValue = (schema) => {
-        return Object.keys(schema).reduce((r,a) => {
-            let day = schema[a].reduce((r2,a2) => {
-                let index = schema[a].indexOf(a2) ? "_" + schema[a].indexOf(a2) : "";
-                if (a2["from"] && a2["to"]) {
-                    r[a + index + "-from"] = a2["from"];
-                    r[a + index + "-to"] = a2["to"];
-                };
-                return r2;
-            },[]);
-            return r;
-        },{});
-    };
-
     const handleInitAppointment = () => {
         context.initAppointment(companyId);
         navigate("/agendar/" + companyId + "/")
     };
 
-    return(
-        <div className="">
-            <Spinner hidden={!loading}></Spinner>
-            {
-                !loading && store ?
+    if (!pageState.loading && store) {
+        return(
             <div className="p-4 pb-5">
                 <div className="w-100">
                     <div className="rounded rounded-circle position-relative d-flex align-items-center justify-content-center">
@@ -321,10 +307,9 @@ const UserStore = ({ context, navigate, handleShow, copyToClipboard, createDate 
                     </div>
                 </div>
                 </div>
-            </div> : null
-            }
-        </div>
-    )
+            </div> 
+        )
+    }
 };
 
 export default UserStore;

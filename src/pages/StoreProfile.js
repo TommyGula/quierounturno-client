@@ -14,6 +14,7 @@ import HiddenSection from "../components/HiddenSection";
 import ListItem from "../components/ListItem";
 import Schedules from "../components/Schedules";
 import ItemDropdown from "../components/ItemDropdown";
+import { handlePromises } from "../utils/helpers";
 
 const requiredFields = [
     "name",
@@ -25,9 +26,8 @@ const requiredFields = [
     "createdBy",
 ];
 
-const StoreProfile = ({ context, navigate, show, setShow, redirect, setRedirect, modalTitle, setModalTitle, modalDescription, setModalDescription, handleClose, handleShow, onPageError, handleAlertShow, handleSeeMore, seeMore, copyToClipboard }) => {
+const StoreProfile = ({ pageState, context, navigate, show, setShow, redirect, setRedirect, modalTitle, setModalTitle, modalDescription, setModalDescription, handleClose, handleShow, onPageError, handleAlertShow, handleSeeMore, seeMore, copyToClipboard }) => {
     const { companyId } = useParams();
-    const [loading, setLoading] = useState(true);
     const [submited, setSubmited] = useState(false);
     const [body, setBody] = useState({});
     const [profile, setProfile] = useState({});
@@ -38,16 +38,20 @@ const StoreProfile = ({ context, navigate, show, setShow, redirect, setRedirect,
     const [employees, setEmployees] = useState([]);
 
     useEffect(() => {
-        getStore();
-        getEmployees();
-        getServices();
+        handlePromises([
+            getStore(),
+            getEmployees(),
+            getServices(),
+        ]).then((values) => {
+            pageState.setLoading(false);
+        }).catch((err) => {
+            throw new Error(err.message);
+        })
     },[]);
 
     const getStore = () => {
         get("businesses/" + companyId, context.token, (store) => {
             setStore(store[0]);
-            console.log(store[0])
-            setLoading(false);
         });
     };
 
@@ -92,6 +96,7 @@ const StoreProfile = ({ context, navigate, show, setShow, redirect, setRedirect,
     const getEmployees = () => {
         get("employees?companyId=" + companyId, context.token, (employees) => {
             if (employees.length) {
+                //console.log(employees)
                 for (let employee of employees) {
                     let employeesUser = [];
                     getUser(employee.userId, (user) => {
@@ -106,6 +111,8 @@ const StoreProfile = ({ context, navigate, show, setShow, redirect, setRedirect,
             }
         })
     };
+
+    //{"userId":"62db76645c439782901c0dd5"}
 
     const getServices = () => {
         get("services?companyId=" + companyId, context.token, (resServices) => {
@@ -133,141 +140,139 @@ const StoreProfile = ({ context, navigate, show, setShow, redirect, setRedirect,
         },{});
     };
 
-    return(
-        <FormContext setRedirect={setRedirect} id={companyId} body={body} setSubmited={setSubmited} requiredFields={requiredFields} getContext="businesses" user={context.user} token={context.token} method="PUT" modal={handleShow}>
-            <Spinner hidden={!loading}></Spinner>
-            {
-                !loading ?
-            <div className="p-4">
-                <SectionTitle submited={submited} title="Datos del negocio" onClick={() => handleShow("Título", "Esta es una descripción informativa acerca de la sección que ha clickeado")}></SectionTitle>
-                <div className="row row-cols-md-2 g-3 mt-2">
-                    <div>
-                        <TextField
-                            id="name"
-                            name="name"
-                            className="textfield-primary w-100"
-                            label="Nombre del negocio"
-                            placeholder="Ingresa un nombre"
-                            variant="standard"
-                            value={store.name}
-                            onChange={handleUpdate}
-                            InputProps={{
-  readOnly: !editable,
-}}
-                            error={submited ? !body.name : false}
-                        />
-                    </div>
-                    <div>
-                        <TextField
-                            id="slogan"
-                            name="slogan"
-                            className="textfield-primary w-100"
-                            label="Slogan"
-                            placeholder="Ingresa un slogan"
-                            variant="standard"
-                            value={store.slogan}
-                            InputProps={{
-            readOnly: true,}}
-                            onChange={handleUpdate}
-                        />
-                    </div>
-                </div>
-                <div className="p-4 w-100">
-                    <div className="logo rounded rounded-circle position-relative d-flex align-items-center justify-content-center overflow-hidden">
-                        {
-                            store.logo ?
-                            <img src={process.env.REACT_APP_BACKEND_PATH + "uploads/" + store.logo} alt="" width={"100%"}/> :
-                            <p className="m-0">Agregar Logo</p>
-                        }
-                    </div>
-                    <div className="add-logo text-center mt-4">
-                        <input type="file" id="fileUploader" className="d-none" onChange={handleFileChange}/>
-                        <Button variant="primary" className="h-100" onClick={openFiles}>CAMBIAR LOGO</Button>
-                    </div>
-                </div>
-                <div className="mt-2 text-center">
-                    <SectionTitle title="Compartir link del negocio" onClick={() => handleShow("Título", "Esta es una descripción informativa acerca de la sección que ha clickeado")}></SectionTitle>
-                    <div className="separator mb-2"></div>
-                    <div>
-                        <TextField
-                            id="link"
-                            name="link"
-                            className="textfield-primary col col-12 col-md-8 col-lg-6"
-                            label="Link"
-                            variant="standard"
-                            onChange={handleUpdate}
-                            InputProps={{
-                                readOnly: !editable,
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        <Clipboard onClick={() => copyToClipboard(process.env.REACT_APP_PATH + "me/" + companyId)}></Clipboard>
-                                    </InputAdornment>
-                                ),
-                            }}
-                            error={submited ? !body.link : false}
-                            value={process.env.REACT_APP_PATH + "me/" + companyId}
-                        />
-                    </div>
-                </div>
-                <div className="row g-3 mt-2 g-4 row-cols-1 ">
-                    <div>
-                        <SectionTitle centered title="Compartir publicidad para el negocio" onClick={() => handleShow("Título", "Esta es una descripción informativa acerca de la sección que ha clickeado")}></SectionTitle>
-                        <div className="separator mb-2"></div>
-                        <div className="text-center mt-3">
-                            <img src={Share} className="pointer hoverable" alt="Click here to share link" />
+    if (!pageState.loading && store) {
+        return(
+            <FormContext setRedirect={setRedirect} id={companyId} body={body} setSubmited={setSubmited} requiredFields={requiredFields} getContext="businesses" user={context.user} token={context.token} method="PUT" modal={handleShow}>
+                <div className="p-4">
+                    <SectionTitle submited={submited} title="Datos del negocio" onClick={() => handleShow("Título", "Esta es una descripción informativa acerca de la sección que ha clickeado")}></SectionTitle>
+                    <div className="row row-cols-md-2 g-3 mt-2">
+                        <div>
+                            <TextField
+                                id="name"
+                                name="name"
+                                className="textfield-primary w-100"
+                                label="Nombre del negocio"
+                                placeholder="Ingresa un nombre"
+                                variant="standard"
+                                value={store.name}
+                                onChange={handleUpdate}
+                                InputProps={{
+      readOnly: !editable,
+    }}
+                                error={submited ? !body.name : false}
+                            />
+                        </div>
+                        <div>
+                            <TextField
+                                id="slogan"
+                                name="slogan"
+                                className="textfield-primary w-100"
+                                label="Slogan"
+                                placeholder="Ingresa un slogan"
+                                variant="standard"
+                                value={store.slogan}
+                                InputProps={{
+                readOnly: true,}}
+                                onChange={handleUpdate}
+                            />
                         </div>
                     </div>
-                    <div className="my-4">
-                        <div className="w-100 text-center">
-                            <Link variant="primary" className="btn btn-primary px-4 py-2 mt-4" to={"/" + companyId + "/agendas/"}>VER AGENDA</Link>
-                        </div>
-                        {
-                            !store.paymentMethodActive ? 
-                            <div className="w-100 text-center">
-                                <Button variant="danger" className="btn-danger btn px-4 py-2 mt-4" onClick={activatePaymentMethod}>ACTIVAR MÉTODO DE PAGO</Button>
-                            </div> : null
-                        }
-                    </div>
-                    <div>
-                        <SectionTitle centered title="Demás datos del negocio" onClick={() => handleShow("Título", "Esta es una descripción informativa acerca de la sección que ha clickeado")}></SectionTitle>
-                        <div className="separator mb-2"></div>
-                        <div className="text-center mt-3">
-                            <img src={DisplayMore} onClick={handleSeeMore} seemoretarget="seeMore" className="pointer hoverable" alt="Click here see more info" />
-                        </div>
-                    </div>
-                </div>
-                <HiddenSection open={seeMore} index="seeMore">
-                    <div className="mb-5">
-                        <ItemDropdown items={services} title="Servicios que va a prestar" seemoretarget="services" readonly handleShow={handleShow}></ItemDropdown>
-                    </div>                    
-                    <div className="">
-                        <SectionTitle title="Personal asignado al negocio" centered onClick={() => handleShow("Título", "Esta es una descripción informativa acerca de la sección que ha clickeado")}> </SectionTitle>
-                        <div className="separator"></div>
-                        <ul className="team px-0 mt-3">
+                    <div className="p-4 w-100">
+                        <div className="logo rounded rounded-circle position-relative d-flex align-items-center justify-content-center overflow-hidden">
                             {
-                                employees ? 
-                                <div>
-                                    {
-                                        employees.map(employee => {
-                                            return(
-                                                <ListItem key={employees.indexOf(employee)} name={employee.firstName} selected={true} lastName={employee.lastName} id={employee._id} url={"/" + companyId + "/equipo/" + employee._id}></ListItem>
-                                            )
-                                        })
-                                    }
+                                store.logo ?
+                                <img src={process.env.REACT_APP_BACKEND_PATH + "uploads/" + store.logo} alt="" width={"100%"}/> :
+                                <p className="m-0">Agregar Logo</p>
+                            }
+                        </div>
+                        <div className="add-logo text-center mt-4">
+                            <input type="file" id="fileUploader" className="d-none" onChange={handleFileChange}/>
+                            <Button variant="primary" className="h-100" onClick={openFiles}>CAMBIAR LOGO</Button>
+                        </div>
+                    </div>
+                    <div className="mt-2 text-center">
+                        <SectionTitle title="Compartir link del negocio" onClick={() => handleShow("Título", "Esta es una descripción informativa acerca de la sección que ha clickeado")}></SectionTitle>
+                        <div className="separator mb-2"></div>
+                        <div>
+                            <TextField
+                                id="link"
+                                name="link"
+                                className="textfield-primary col col-12 col-md-8 col-lg-6"
+                                label="Link"
+                                variant="standard"
+                                onChange={handleUpdate}
+                                InputProps={{
+                                    readOnly: !editable,
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <Clipboard onClick={() => copyToClipboard(process.env.REACT_APP_PATH + "me/" + companyId)}></Clipboard>
+                                        </InputAdornment>
+                                    ),
+                                }}
+                                error={submited ? !body.link : false}
+                                value={process.env.REACT_APP_PATH + "me/" + companyId}
+                            />
+                        </div>
+                    </div>
+                    <div className="row g-3 mt-2 g-4 row-cols-1 ">
+                        <div>
+                            <SectionTitle centered title="Compartir publicidad para el negocio" onClick={() => handleShow("Título", "Esta es una descripción informativa acerca de la sección que ha clickeado")}></SectionTitle>
+                            <div className="separator mb-2"></div>
+                            <div className="text-center mt-3">
+                                <img src={Share} className="pointer hoverable" alt="Click here to share link" />
+                            </div>
+                        </div>
+                        <div className="my-4">
+                            <div className="w-100 text-center">
+                                <Link variant="primary" className="btn btn-primary px-4 py-2 mt-4" to={"/" + companyId + "/agendas/"}>VER AGENDA</Link>
+                            </div>
+                            {
+                                !store.paymentMethodActive ? 
+                                <div className="w-100 text-center">
+                                    <Button variant="danger" className="btn-danger btn px-4 py-2 mt-4" onClick={activatePaymentMethod}>ACTIVAR MÉTODO DE PAGO</Button>
                                 </div> : null
                             }
-                        </ul>
+                        </div>
+                        <div>
+                            <SectionTitle centered title="Demás datos del negocio" onClick={() => handleShow("Título", "Esta es una descripción informativa acerca de la sección que ha clickeado")}></SectionTitle>
+                            <div className="separator mb-2"></div>
+                            <div className="text-center mt-3">
+                                <img src={DisplayMore} onClick={handleSeeMore} seemoretarget="seeMore" className="pointer hoverable" alt="Click here see more info" />
+                            </div>
+                        </div>
                     </div>
-                    <div className="mt-5">
-                        <SectionTitle centered title="Horarios de atención" onClick={() => handleShow("Título", "Esta es una descripción informativa acerca de la sección que ha clickeado")}> </SectionTitle>
-                        <div className="separator"></div>
-                        <Schedules readonly value={schemaToValue(store.schedule)}></Schedules>
-                    </div>
-                </HiddenSection>
-            </div> : null
-            }
-        </FormContext>
-    )
+                    <HiddenSection open={seeMore} index="seeMore">
+                        <div className="mb-5">
+                            <ItemDropdown items={services} title="Servicios que va a prestar" seemoretarget="services" readonly handleShow={handleShow}></ItemDropdown>
+                        </div>                    
+                        <div className="">
+                            <SectionTitle title="Personal asignado al negocio" centered onClick={() => handleShow("Título", "Esta es una descripción informativa acerca de la sección que ha clickeado")}> </SectionTitle>
+                            <div className="separator"></div>
+                            <ul className="team px-0 mt-3">
+                                {
+                                    employees.length ? 
+                                    <div>
+                                        {
+                                            employees.map(employee => {
+                                                return(
+                                                    <ListItem key={employees.indexOf(employee)} name={employee.firstName} selected={true} lastName={employee.lastName} id={employee._id} url={"/" + companyId + "/equipo/" + employee._id}></ListItem>
+                                                )
+                                            })
+                                        }
+                                    </div> : null
+                                }
+                            </ul>
+                        </div>
+                        <div className="mt-5">
+                            <SectionTitle centered title="Horarios de atención" onClick={() => handleShow("Título", "Esta es una descripción informativa acerca de la sección que ha clickeado")}> </SectionTitle>
+                            <div className="separator"></div>
+                            <Schedules readonly value={schemaToValue(store.schedule)}></Schedules>
+                        </div>
+                    </HiddenSection>
+                </div>
+            </FormContext>
+        )
+    }
 };
 
 export default StoreProfile;

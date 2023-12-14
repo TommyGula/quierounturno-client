@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Spinner from "./Spinner";
 import SectionTitle from "./SectionTitle";
-import { Box, Tabs, Tab, Typography } from "@mui/material";
+import { Box, Tabs, Tab, Typography, TextField } from "@mui/material";
 import { ViewState,EditingState,IntegratedEditing } from '@devexpress/dx-react-scheduler';
 import {
   Scheduler,
@@ -16,29 +16,55 @@ import {
   AppointmentForm,
   ConfirmationDialog,
 } from '@devexpress/dx-react-scheduler-material-ui';
+import NewAppointment from "../pages/NewAppointment";
+import PageContext from "./PageContext";
+import { put, remove } from "../utils/axios";
 
-const Appointment = ({
-    children, style, ...restProps
-  }) => {
-    return(
-        <Appointments.Appointment
-          {...restProps}
-          style={{
-            ...style,
-          }}
-        >
-          {children}
-        </Appointments.Appointment>
-    );
-};
-
-const Agenda = ({agenda, readonly, duration, startDayHour, endDayHour}) => {
+const Agenda = ({agenda, readonly, duration, startDayHour, endDayHour, context, update}) => {
     useEffect(() => {
         console.log(agenda)
     },[])
-    const [value, setValue] = useState(0);
+    const [value, setValue] = useState(1);
 
     const currentDate = new Date();
+
+    const AppointmentElements = () => {
+        return [
+            <Appointments
+                appointmentComponent={Appointment}
+            />,
+            <EditingState
+            onCommitChanges={commitChanges}
+            />,
+            <IntegratedEditing />,
+            <ConfirmationDialog />,
+            <AppointmentTooltip
+                showCloseButton
+                showOpenButton
+                showDeleteButton
+            />,
+            <AppointmentForm
+                basicLayoutComponent={EditingForm}
+                showDeleteButton={false}
+            />
+        ]
+    }
+
+    const Appointment = ({
+        children, style, ...restProps
+    }) => {
+        return(
+            <Appointments.Appointment
+            {...restProps}
+            style={{
+                ...style,
+            }}
+            isShaded={true}
+            >
+            {children}
+            </Appointments.Appointment>
+        );
+    };
 
     function TabPanel(props) {
         const { children, value, index, ...other } = props;
@@ -64,9 +90,38 @@ const Agenda = ({agenda, readonly, duration, startDayHour, endDayHour}) => {
         setValue(newValue);
     };
 
-    const commitChanges = () => {
-
+    const commitChanges = ({ added, changed, deleted }) => {
+        if (added) {
+            // Not implemented
+            return;
+        };
+        if (changed) {
+            Object.keys(changed).map((id, i) => {
+                put("appointments/" + id, context.token, changed[id], () => {
+                    if (i === Object.keys(changed).length - 1) {
+                        update();
+                    };
+                })
+            })
+        };
+        if (deleted) {
+            remove("appointments/" + deleted, context.token, () => {
+                update();
+            })
+        }
     };
+
+    const EditingForm = ({ children, onFieldChange, appointmentData, ...restProps }) => {
+        if (appointmentData) {
+            console.log("APPOINTMENT DATA ", appointmentData);
+            //context.setAppointmentData(appointmentData);
+        }
+        return (
+            <div className="custom-layout w-100">
+                <PageContext containerClass="px-0" private embed><NewAppointment /></PageContext>
+            </div>
+        );
+    }
 
     return(
         <div className="agenda">
@@ -97,49 +152,13 @@ const Agenda = ({agenda, readonly, duration, startDayHour, endDayHour}) => {
                             <Toolbar style={{paddingLeft:"0 !important"}} />
                             <DateNavigator />
                             <TodayButton />
-                            <Appointments
-                                appointmentComponent={Appointment}
-                            />
-                            {
-                                !readonly ?
-                                <div>
-                                    <EditingState
-                                    onCommitChanges={commitChanges}
-                                    />
-                                    <IntegratedEditing />
-                                    <ConfirmationDialog />
-                                    <AppointmentTooltip
-                                        showCloseButton
-                                        showOpenButton
-                                    />
-                                    <AppointmentForm
-                                    />
-                                </div> : null
-                            }
+                            {AppointmentElements()}
                         </Scheduler>
                     </TabPanel>
                     <TabPanel value={value} index={1}>
                         <Scheduler data={agenda} >
                             <WeekView startDayHour={9} endDayHour={19} />
-                            <Appointments
-                                appointmentComponent={Appointment}
-                            />
-                            {
-                                !readonly ?
-                                <div>
-                                    <EditingState
-                                    onCommitChanges={commitChanges}
-                                    />
-                                    <IntegratedEditing />
-                                    <ConfirmationDialog />
-                                    <AppointmentTooltip
-                                        showCloseButton
-                                        showOpenButton
-                                    />
-                                    <AppointmentForm
-                                    />
-                                </div> : null
-                            }
+                            {AppointmentElements().map(el => el)}
                         </Scheduler>
                     </TabPanel>
                     <TabPanel value={value} index={2}>
@@ -153,25 +172,7 @@ const Agenda = ({agenda, readonly, duration, startDayHour, endDayHour}) => {
                             <DateNavigator />
                             <TodayButton />
                             <MonthView />
-                            <Appointments
-                                appointmentComponent={Appointment}
-                            />
-                            {
-                                !readonly ?
-                                <div>
-                                    <EditingState
-                                    onCommitChanges={commitChanges}
-                                    />
-                                    <IntegratedEditing />
-                                    <ConfirmationDialog />
-                                    <AppointmentTooltip
-                                        showCloseButton
-                                        showOpenButton
-                                    />
-                                    <AppointmentForm
-                                    />
-                                </div> : null
-                            }
+                            {AppointmentElements()}
                         </Scheduler>
                     </TabPanel>
 

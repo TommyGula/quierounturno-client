@@ -24,7 +24,7 @@ import { useSearchParams } from 'react-router-dom';
 
 const steps = ['Servicio', 'Día y hora', 'Pago'];
 
-export default function QuieroUnTurno({context, navigate, handleAlertShow}) {
+export default function NewAppointment({context, navigate, handleAlertShow}) {
   const [searchParams, setSearchParams] = useSearchParams();
   const service = searchParams.get("service");
   const days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
@@ -99,6 +99,7 @@ export default function QuieroUnTurno({context, navigate, handleAlertShow}) {
             };
             post('appointments', context.token, appointmentBody, (res) => {
               if (!res.message) {
+                handleReset();
                 next();
               } else {
                 handleAlertShow(res.message, "error");

@@ -76,7 +76,7 @@ const NewService = ({ context, navigate, show, setShow, redirect, setRedirect, m
             }
         })
     };
-
+ 
     const getEmployees = () => {
         get("employees?companyId=" + companyId, context.token, (employees) => {
             if (employees.length) {
@@ -162,7 +162,7 @@ const NewService = ({ context, navigate, show, setShow, redirect, setRedirect, m
     }, [service, disabledSlider, value, photos, photos]);
 
     return(
-        <FormContext redirect={"/my-panel"} id={companyId} cta="CREAR"  redirectMessage="Ahora invita a las personas que trabajarán en tu nuevo servicio" setRedirect={setRedirect} body={body} setSubmited={setSubmited} requiredFields={requiredFields} getContext="businesses" postContext="services" user={context.user} token={context.token} method="POST" modal={handleShow}>
+        <FormContext redirect={"/mis-negocios"} id={companyId} cta="CREAR"  redirectMessage="Ahora invita a las personas que trabajarán en tu nuevo servicio" setRedirect={setRedirect} body={body} setSubmited={setSubmited} requiredFields={requiredFields} getContext="businesses" postContext="services" user={context.user} token={context.token} method="POST" modal={handleShow}>
             <div className="p-4">
                 <SectionTitle submited={submited} title="Nuevo Servicio" onClick={() => handleShow("Título", "Esta es una descripción informativa acerca de la sección que ha clickeado")}></SectionTitle>
                     <div className="row row-cols-md-2 g-3 mt-2">

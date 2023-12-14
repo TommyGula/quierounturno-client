@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Button } from "react-bootstrap";
 import ItemDropdown from "../components/ItemDropdown";
 import { get } from "../utils/axios";
 import Spinner from "../components/Spinner";
 
-const MainPannel = ({children, handleShow, context}) => {
+const StoreList = ({children, handleShow, context}) => {
     const navigate = useNavigate();
     const [stores, setStores] = useState(null);
 
@@ -19,17 +20,20 @@ const MainPannel = ({children, handleShow, context}) => {
         });
     };
 
-    const handleStores = () => {
-
+    const handleGoogleMyBusiness = () => {
+        get("businesses/google/locations", context.token, (response) => {
+            alert(JSON.stringify(response))
+        })
     };
 
     return(
-        <div className="MainPannel">
+        <div className="StoreList">
             {
                 !stores ?
                 <Spinner></Spinner> :
                 <div className="p-4">
                 <div className="w-100 text-end">
+                    <Button onClick={handleGoogleMyBusiness} className="btn px-3 me-3 py-2 my-3 mt-0" >Integrar Google My Business</Button>
                     <Link variant="primary" className="btn btn-primary px-3 py-2 my-3 mt-0" to={"/nuevo/negocio"}>Nuevo</Link>
                 </div>
                     {
@@ -49,4 +53,4 @@ const MainPannel = ({children, handleShow, context}) => {
     );
 };
 
-export default MainPannel;
+export default StoreList;

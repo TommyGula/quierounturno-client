@@ -132,7 +132,7 @@ const NewCompany = ({ navigate, show, setShow, redirect, setRedirect, modalTitle
     };
 
     const createUser = (companyId, callback) => {
-        fetch(process.env.REACT_APP_BACKEND_PATH + "/employees",{
+        fetch(process.env.REACT_APP_BACKEND_PATH + "employees",{
             method:"POST",
             headers:{ 'Content-Type': 'application/json' },
             body:JSON.stringify({
@@ -149,7 +149,7 @@ const NewCompany = ({ navigate, show, setShow, redirect, setRedirect, modalTitle
     };
 
     return(
-        <FormContext callback={createUser} redirect={"/me/[_id]/nuevo/servicio"} cta="CREAR"  redirectMessage="Ahora te recomendamos crear un servicio para tu negocio" setRedirect={setRedirect} body={body} setSubmited={setSubmited} requiredFields={requiredFields} postContext="businesses" method="POST" modal={handleShow}>
+        <FormContext callback={createUser} redirect={"/me/[_id]/nuevo/servicio"} cta="CREAR" token={context.token} redirectMessage="Ahora te recomendamos crear un servicio para tu negocio" setRedirect={setRedirect} body={body} setSubmited={setSubmited} requiredFields={requiredFields} postContext="businesses" method="POST" modal={handleShow}>
             <div className="p-4">
                 <h3 className="title f-500">Datos del Negocio <Info className="info-icon"  onClick={() => handleShow("Título", "Esta es una descripción informativa acerca de la sección que ha clickeado")} validationtext="Complete todos los campos requeridos" requiredtarget={business.name}></Info></h3>
                 <div className="row row-cols-md-2 g-3 mt-2">

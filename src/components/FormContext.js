@@ -7,6 +7,7 @@ import Spinner from "./Spinner";
 const FormContext = (props) => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
+
     const handleSubmit = () => {
         const body = props.body;
         props.setSubmited(true);
@@ -24,7 +25,7 @@ const FormContext = (props) => {
             })
             .then(async (data)=>{
                 const json = await data.json;
-                if (data.status !== 200) {
+                if (!json._id) {
                     props.modal("Error "+(data.status || 500), json.message);
                 } else {
                     let finalRedirect = props.redirect;
