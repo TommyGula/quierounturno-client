@@ -6,7 +6,7 @@ const GlobalState = ({children}) => {
     const [token, setToken] = useState(localStorage.getItem("token"));
     const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
     const [businesses, setBusinesses] = useState(JSON.parse(localStorage.getItem("businesses")) || []);
-    const [appointment, setAppointment] = useState(JSON.parse(localStorage.getItem("appointment")));
+    const [appointment, setAppointment] = useState(JSON.parse(localStorage.getItem("appointment")) || {});
     const [isAppointmentSet, setIsAppointmentSet] = useState(localStorage.getItem("isAppointmentSet"));
     const colorPrimary = "#00C4B4";
 
@@ -39,7 +39,7 @@ const GlobalState = ({children}) => {
         setIsAppointmentSet(true);
 
         localStorage.setItem("appointment", JSON.stringify({companyId:companyId, expiry:new Date().getTime() + 60}));
-        localStorage.setItem("appointmentIsSet", JSON.stringify({value:true, expiry:new Date().getTime() + 60}));
+        localStorage.setItem("isAppointmentSet", JSON.stringify({value:true, expiry:new Date().getTime() + 60}));
     };
 
     const buildAppointment = (name, value, cb) => {

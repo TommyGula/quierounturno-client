@@ -1,10 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap');
 
-:root {
-  --primary-color: #00C4B4;
-  --secondary-color: #6c757d;
-}
-
 body {
   padding: 0;
   background-color: #F4FFFE;
@@ -107,6 +102,10 @@ li {
   color: white;
 }
 
+.c-primary {
+  color: #00C4B4;
+}
+
 /* Backgrounds */
 
 .bg-cover-center {
@@ -121,12 +120,80 @@ li {
   background-repeat: no-repeat;
 }
 
+.bg-secondary {
+  background: #00C4B4;
+}
+
+.bgc-secondary {
+  background-color: #00C4B4;
+}
+
+.bg-primary {
+  background: #F4FFFE;;
+}
+
 .bg-white {
   background: white;
 }
 
 /* Buttons */
 
+.btn-primary {
+  color: #fff;
+  background-color: #00C4B4;
+  border-color: #00C4B4;
+}
+
+.btn-primary:hover {
+  color: #fff;
+  background-color: #009b8e;
+  border-color: #009b8e;
+}
+
+.btn-primary.focus, .btn-primary:focus {
+  box-shadow: 0 0 0 .2rem #009b8e80;
+  background-color: #009b8e;
+  border-color: #009b8e;
+}
+
+.btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active, .show>.btn-primary.dropdown-toggle {
+  color: #fff;
+  background-color: #009b8e;
+  border-color: #009b8e;
+}
+
+.btn-primary {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: #00C4B4;
+  --bs-btn-border-color: #00C4B4;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #00C4B4;
+  --bs-btn-hover-border-color: #009b8e;
+  --bs-btn-focus-shadow-rgb: 0,155,142;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #009b8e;
+  --bs-btn-active-border-color: rgb(0, 155, 142);
+  --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+  --bs-btn-disabled-color: #fff;
+  --bs-btn-disabled-bg: #00C4B4;
+  --bs-btn-disabled-border-color: #00C4B4;
+}
+
+.btn-outline-primary {
+  --bs-btn-color: #00C4B4;
+  --bs-btn-border-color: #00C4B4;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #00C4B4;
+  --bs-btn-hover-border-color: rgb(0, 194, 178);
+  --bs-btn-focus-shadow-rgb: 0,155,142;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #00C4B4;
+  --bs-btn-active-border-color: #00C4B4;
+  --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+  --bs-btn-disabled-color: #00C4B4;
+  --bs-btn-disabled-bg: transparent;
+  --bs-gradient: none;
+}
 
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
@@ -140,15 +207,47 @@ input[type=number] {
   -moz-appearance: textfield;
 }
 
+.textfield-primary label, .textfield-primary p {
+  color: #00C4B4 !important;
+}
+
+.css-1u4zpwo-MuiSvgIcon-root-MuiStepIcon-root.Mui-active, .css-1u4zpwo-MuiSvgIcon-root-MuiStepIcon-root.Mui-completed, .css-1e6y48t-MuiButtonBase-root-MuiButton-root {
+  color: #00C4B4 !important;
+}
+
+.css-1h9z7r5-MuiButtonBase-root-MuiTab-root.Mui-selected, .css-vnscjq-MuiButtonBase-root-MuiButton-root, .css-xya8j6-MuiButtonBase-root-MuiButton-root, .css-1675apn-MuiTableCell-root .Cell-highlightedText, .css-1675apn-MuiTableCell-root .Cell-highlightedText, .css-71a9mb-MuiButtonBase-root-MuiIconButton-root {
+  color: #00C4B4 !important;
+}
+
+.css-xya8j6-MuiButtonBase-root-MuiButton-root {
+  border-color: #00C4B4 !important;;
+}
+
+.css-1aquho2-MuiTabs-indicator {
+  background-color: #00C4B4 !important;
+}
+
+.css-1ptx2yq-MuiInputBase-root-MuiInput-root:after {
+  border-bottom: 2px solid #00C4B4 !important;
+}
+
+.css-187mznn-MuiSlider-root {
+  color: #00C4B4 !important;
+}
+
+.css-28p3iz-MuiPaper-root-MuiAlert-root {
+  background-color: #00C4B4 !important;
+}
+
 .dropdown {
   
 }
 
 .btn-social {
   width: 100%;
-  border-radius: 20rem !important;
+  border-radius: 20rem;
   padding: .5rem;
-  border-width: 2px !important;
+  border-width: 2px;
 }
 
 .btn-facebook {
@@ -171,6 +270,23 @@ input[type=number] {
 .profile-photo {
   border-radius: 50%;
   overflow: hidden;
+}
+
+.css-1sumxir-MuiFormLabel-root-MuiInputLabel-root.Mui-focused {
+  color: #00C4B4 !important;
+}
+
+.Mui-focused {
+/*   color: #00C4B4 !important; */
+}
+
+.css-1c2i806-MuiFormLabel-root-MuiInputLabel-root.Mui-focused {
+  color: #00C4B4 !important;
+}
+
+.css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: #00C4B4 !important;
+  border-width: 2px !important;
 }
 
 .error {
@@ -199,6 +315,17 @@ input[type=number] {
 
 .MuiSnackbar-root {
   box-shadow: 5px 5px 10px 0 gainsboro;
+}
+
+.form-check-input:checked {
+  background-color: #00C4B4;
+  border-color: #00C4B4;
+}
+
+.form-check-input:focus {
+  border-color: #00c4b46e;
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem #00c4b46e;
 }
 
 .bottom-10 {

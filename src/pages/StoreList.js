@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "react-bootstrap";
-import ItemDropdown from "../components/ItemDropdown";
+import ItemsListDropdown from "../components/ItemsListDropdown";
 import { get } from "../utils/axios";
 import Spinner from "../components/Spinner";
 
@@ -39,7 +39,7 @@ const StoreList = ({children, handleShow, context}) => {
                     {
                         stores.length ? 
                         <div>
-                            <ItemDropdown opened={"auto"} readonly imageAttr="logo" image={(src) => process.env.REACT_APP_BACKEND_PATH + "uploads/" + src} items={stores} title="Mis Negocios" handleShow={handleShow} url={(key) => "./me/" + key} seemoretarget="mainPannel"></ItemDropdown>
+                            <ItemsListDropdown opened={"auto"} readonly imageAttr="logo" image={(src) => process.env.REACT_APP_BACKEND_PATH + "uploads/" + src} items={stores} title="Mis Negocios" handleShow={handleShow} url={(key) => "./me/" + key} seemoretarget="mainPannel"></ItemsListDropdown>
                         </div> : 
                         <div className="text-center">
                             <div className="separator mb-4"></div>

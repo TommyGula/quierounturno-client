@@ -4,8 +4,9 @@ import itemImg from "../assets/store.png";
 import { Info } from "react-bootstrap-icons";
 import HiddenSection from "./HiddenSection";
 import { Link } from "react-router-dom";
+import { Button } from "@mui/material";
 
-const ItemDropdown = (props) => {
+const ItemsListDropdown = (props) => {
     const items = props.items;
     const [opened, setOpened] = useState(false);
 
@@ -33,7 +34,7 @@ const ItemDropdown = (props) => {
     },[props.seemoretarget]);
 
     return(
-        <div className="ItemDropdown">
+        <div className="ItemsListDropdown">
             <div className="item-dropdown-header justify-content-between d-flex align-items-center">
                 {
                     props.title ?
@@ -71,8 +72,10 @@ const ItemDropdown = (props) => {
                                                 <div className="text-center">
                                                     {
                                                         props.readonly ?
-                                                        <Link className="px-4 py-2 my-4 btn btn-primary" to={"/" + (props.url ? props.url(item._id) : item._id)}>{props.ctaText || "Ingresar"}</Link> :
-                                                        <input type="checkbox" className="form-check-input" name={item.id} onChange={props.onChange}/>
+                                                        <Link to={"/" + (props.url ? props.url(item._id) : item._id)}>
+                                                            <Button className="text-white px-4 py-2 my-4" variant="contained">{props.ctaText || "Ingresar"}</Button>
+                                                        </Link> :
+                                                        <input type="checkbox" className="form-check-input" name={item._id} onChange={props.onChange} checked={props.checked === item._id}/>
                                                     }
                                                 </div> : null
                                             }
@@ -89,4 +92,4 @@ const ItemDropdown = (props) => {
     )
 };
 
-export default ItemDropdown;
+export default ItemsListDropdown;

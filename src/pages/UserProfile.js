@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import SectionTitle from "../components/SectionTitle";
-import ItemDropdown from "../components/ItemDropdown";
+import ItemsListDropdown from "../components/ItemsListDropdown";
 import { Link } from "react-router-dom";
 import { handlePromises } from "../utils/helpers";
 import { get } from "../utils/axios";
@@ -51,7 +51,7 @@ const UserProfile = ({context, pageState, handleShow}) => {
                     {
                         appointments.length ? 
                         <div>
-                            <ItemDropdown opened={"auto"} readonly imageAttr="logo" image={(src) => process.env.REACT_APP_BACKEND_PATH + "uploads/" + src} items={appointments} title="Mis Turnos" handleShow={handleShow} url={(key) => "./me/" + key} seemoretarget="mainPannel"></ItemDropdown>
+                            <ItemsListDropdown opened={"auto"} readonly imageAttr="logo" image={(src) => process.env.REACT_APP_BACKEND_PATH + "uploads/" + src} items={appointments} title="Mis Turnos" handleShow={handleShow} url={(key) => "./me/" + key} seemoretarget="mainPannel"></ItemsListDropdown>
                         </div> : 
                         <div className="text-center">
                             <div className="separator mb-4"></div>

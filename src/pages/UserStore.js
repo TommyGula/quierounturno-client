@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import SectionTitle from "../components/SectionTitle";
-import { Button } from "react-bootstrap";
+import { Button } from "@mui/material";
 import Call from "../assets/call.svg";
 import { get } from "../utils/axios";
 import HiddenSection from "../components/HiddenSection";
-import ItemDropdown from "../components/ItemDropdown";
+import ItemsListDropdown from "../components/ItemsListDropdown";
 import NoLogo from "../assets/no-logo.png";
 import { Clock } from "react-bootstrap-icons";
 import { TextField } from "@mui/material";
@@ -14,8 +14,9 @@ import { Clipboard } from "react-bootstrap-icons";
 import {InputAdornment} from "@mui/material";
 import Share from "../assets/share.svg";
 import { handlePromises, days } from "../utils/helpers";
+import { createDate } from "../utils/helpers";
 
-const UserStore = ({ context, navigate, handleShow, copyToClipboard, createDate, pageState }) => {
+const UserStore = ({ context, navigate, handleShow, copyToClipboard, pageState }) => {
     const { companyId } = useParams();
     const pageName = "userStore";
 
@@ -157,11 +158,6 @@ const UserStore = ({ context, navigate, handleShow, copyToClipboard, createDate,
 
     };
 
-    const handleInitAppointment = () => {
-        context.initAppointment(companyId);
-        navigate("/agendar/" + companyId + "/")
-    };
-
     if (!pageState.loading && store) {
         return(
             <div className="p-4 pb-5">
@@ -229,11 +225,13 @@ const UserStore = ({ context, navigate, handleShow, copyToClipboard, createDate,
                         </div>
                     </div>
                     <div className="">
-                        <ItemDropdown image={(src) => process.env.REACT_APP_BACKEND_PATH + "uploads/" + src[0]} imageAttr="photos" items={services} title="Servicios" seemoretarget={pageName + "2"} readonly ctaText="SOLICITAR" handleShow={handleShow}></ItemDropdown>
+                        <ItemsListDropdown image={(src) => process.env.REACT_APP_BACKEND_PATH + "uploads/" + src[0]} imageAttr="photos" items={services} title="Servicios" seemoretarget={pageName + "2"} readonly ctaText="SOLICITAR" url={(serviceId) => "agendar/" + companyId+ "?service=" + serviceId} handleShow={handleShow}></ItemsListDropdown>
                     </div>    
                     <div className="mt-0">
                         <div className="w-100 text-center">
-                            <Button variant="primary" className="px-4 py-2 my-4" onClick={handleInitAppointment}>QUIERO UN TURNO</Button>
+                            <Link variant="primary" onClick={() => context.initAppointment(companyId)} to={"/agendar/" + companyId} >
+                                <Button className="text-white px-4 py-2 my-4" variant="contained">QUIERO UN TURNO</Button>
+                            </Link>
                         </div>
                     </div>       
                     <div className="mt-4 row">

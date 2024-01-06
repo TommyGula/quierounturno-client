@@ -47,6 +47,6 @@ export const addDigit = (str, n, digit="0", left=false) => {
   } else {
       return str;
   }
-}
+};
 
 export const days = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];

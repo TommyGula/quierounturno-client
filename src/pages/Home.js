@@ -1,8 +1,9 @@
 import React from "react";
-import { Button } from "react-bootstrap";
+import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import Search from "../components/Search";
 
-const Home = () => {
+const Home = ({context}) => {
     const navigate = useNavigate();
     return(
         <div className="Home mb-5">
@@ -30,9 +31,14 @@ const Home = () => {
                 </div>
                 <section style={{maxWidth:"769px"}}>
                     <div className="text-center d-grid gap-4 px-4 position-relative">
-                        <Button variant="primary" className="h-100" onClick={() => navigate("/mis-negocios")}>QUIERO OFRECER SERVICIOS</Button>
-                        <Button variant="outline-primary" className="h-100" onClick={() => navigate("/buscar-turno")}>QUIERO BUSCAR UN TURNO</Button>
+                        <a href={process.env.REACT_APP_ADMIN_PATH + "nuevo/negocio"}>
+                            <Button variant="contained" className="h-100 p-3 text-white w-100"><strong>QUIERO OFRECER SERVICIOS</strong></Button>
+                        </a>
+{/*                         <Button variant="outline-primary" className="h-100" onClick={() => navigate("/buscar-turno")}>QUIERO BUSCAR UN TURNO</Button> */}
                     </div>
+                </section>
+                <section>
+                    <Search context={context}></Search>
                 </section>
             </div>
         </div>

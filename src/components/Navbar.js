@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { Bell, BellFill, GearFill } from 'react-bootstrap-icons';
 import { CheckCircleFill, Search, ExclamationCircleFill } from "react-bootstrap-icons";
-import { Container, Button, Dropdown } from "react-bootstrap";
+import { Container, Dropdown } from "react-bootstrap";
+import { Button } from "@mui/material";
 
 import Logo from "./Logo";
 import User from "../assets/user.png";
@@ -55,10 +56,16 @@ const Navbar = () => {
                     </div>
                     {/* <img src={Logo} style={{cursor:"pointer"}} alt="Quiero Un Turno" height={100} onClick={() => navigate("/")}/> */}
                     <div className="Navbar-content-cta ms-5 d-grid gap-2 gap-lg-3 d-lg-flex justify-content-end mt-2 mt-lg-0">
-                        <div className="d-grid d-lg-flex gap-2 justify-content-end">
-                            <Link variant="primary" className="btn btn-primary d-flex align-items-center f-700 mt-lg-2" to={(context.businesses && context.businesses !== 0 ? "/mis-negocios" : "/nuevo/negocio")}>{(context.businesses && context.businesses !== 0 ? "MIS NEGOCIOS" : "QUIERO OFRECER SERVICIOS")}</Link>{' '}
-                            <Link variant="outline-primary order-lg-first" className="btn btn-outline-primary d-flex align-items-center f-700 mt-lg-2" to={"/buscar-turno"}>QUIERO BUSCAR UN TURNO</Link>{' '}
-                        </div>
+                        {
+                            window.location.pathname !== "/" &&
+                            <div className="d-grid d-lg-flex gap-2 justify-content-end">
+                                <a className="text-decoration-none" href={process.env.REACT_APP_ADMIN_PATH + "nuevo/negocio"}>
+                                    <Button className="text-white d-flex align-items-center f-700 mt-lg-2" variant="contained"><strong>QUIERO OFRECER SERVICIOS</strong></Button>
+                                </a>{' '}
+                                <Link className="text-decoration-none" to={"/"}>
+                                <Button className="d-flex align-items-center f-700 mt-lg-2" variant="outlined"><strong>QUIERO BUSCAR UN TURNO</strong></Button></Link>{' '}
+                            </div>
+                        }
                         {
                             context.user ?
                             <div className="user-info d-flex justify-content-end align-items-center">

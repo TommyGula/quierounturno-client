@@ -11,15 +11,13 @@ const PageContext2 = (props) => {
     // URL declarations
     const [searchParams, setSearchParams] = useSearchParams();
     const init_message = searchParams.get("init_message");
-    const serviceAppointment = searchParams.get("serviceAppointment");
-    const companyAppointment = searchParams.get("companyAppointment");
     const navigate = useNavigate();
 
     // Context
     const context = useContext(UserContext);
 
     // Page state
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(props.noLoad ? false : true);
 
     // Page interactions
     const [show, setShow] = useState(false);
@@ -36,10 +34,6 @@ const PageContext2 = (props) => {
         if (init_message) {
             handleAlertShow(init_message.replace(/%20/g, " "), "success");
         };
-        if (serviceAppointment && companyAppointment) {
-            context.initAppointment(companyAppointment)
-            navigate("/agendar/" + companyAppointment + "?service=" + serviceAppointment);
-        }
     })
 
     const handleSeeMore = (e) => {

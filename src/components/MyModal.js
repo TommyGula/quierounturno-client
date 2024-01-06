@@ -1,5 +1,6 @@
 import React from "react";
-import { Modal, Button } from "react-bootstrap";
+import { Modal } from "react-bootstrap";
+import { Button } from "@material-ui/core";
 
 const MyModal = (props) => {
     return(
@@ -11,14 +12,14 @@ const MyModal = (props) => {
             <Modal.Footer>
                 {
                     props.secondary ?
-                    <Button variant="secondary" onClick={props.handleSecondary}>
+                    <Button variant="contained" color="secondary" onClick={props.handleSecondary}>
                         {props.secondary}
                     </Button> :
                     null
                 }
                 {
                     props.primary ?
-                    <Button variant="primary" onClick={props.handlePrimary}>
+                    <Button variant="contained" onClick={props.handlePrimary}>
                         {props.primary}
                     </Button> :
                     null

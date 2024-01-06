@@ -1,7 +1,8 @@
 import React, {useContext, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
-import {Button, Form} from "react-bootstrap";
+import { Button } from "@mui/material";
+import {Form} from "react-bootstrap";
 import TextField from '@mui/material/TextField';
 import MyModal from "../components/MyModal";
 import GoogleLoginComponent from "../components/GoogleLoginComponent";
@@ -92,12 +93,12 @@ const Login = () => {
                             </Form.Group>
                         </div>
                         <div className="d-flex justify-content-center mb-5">
-                            <Button variant="primary" onClick={handleSubmit} className="btn-social col col-12 col-sm-6 col-md-4">Iniciar sesión</Button>
+                            <Button variant="contained" onClick={handleSubmit} className="text-white btn-social col col-12 col-sm-6 col-md-4">Iniciar sesión</Button>
                         </div>
                         </Form>
                 </div>
                 <h6 className="mb-4">¿No tienes una cuenta?</h6>
-                <Button variant="outline-primary order-lg-first" className="btn-social mb-5" onClick={() => navigate("/register")}>Registrate</Button>
+                <Button variant="outlined" className="btn-social mb-5" onClick={() => navigate("/register")}>Registrate</Button>
             </div>
             <Spinner hidden={!loading}></Spinner>
         </div>
