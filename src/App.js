@@ -7,6 +7,8 @@ import {
 import { Container } from "react-bootstrap";
 import GlobalState from './context/GlobalState';
 import { createTheme, ThemeProvider } from '@mui/material';
+import { I18nextProvider } from "react-i18next";
+import i18n from "./utils/translation";
 
 // Pages
 import Home from "./pages/Home";
@@ -41,21 +43,23 @@ const App = () => {
     <GlobalState>
       <BrowserRouter>
         <ThemeProvider theme={theme}>
-          <Navbar/>
-          <MyErrorBoundary>
-          <Container className="container-class">
-            <Routes>
-              <Route path="/" element={<PageContext2 embed noLoad><Home /></PageContext2>} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/registro" element={<Register />} />
-              <Route path="/mis-turnos" element={<PageContext private><UserAgenda/></PageContext>} />
-              <Route path="/mi-perfil" element={<PageContext2 private><UserProfile/></PageContext2>} />
-              <Route path="/pago/:id" element={<Payment />} />
-              <Route path="/:companyId" element={<PageContext2 private><UserStore /></PageContext2>} />
-              <Route path="/agendar/:companyId" element={<PageContext2 private><NewAppointment /></PageContext2>} />
-            </Routes>
-          </Container>
-          </MyErrorBoundary>
+          <I18nextProvider i18n={i18n}>
+            <Navbar/>
+            <MyErrorBoundary>
+            <Container className="container-class">
+              <Routes>
+                <Route path="/" element={<PageContext2 embed noLoad><Home /></PageContext2>} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/registro" element={<Register />} />
+                <Route path="/mis-turnos" element={<PageContext><UserAgenda/></PageContext>} />
+                <Route path="/mi-perfil" element={<PageContext2 private><UserProfile/></PageContext2>} />
+                <Route path="/pago/:id" element={<Payment />} />
+                <Route path="/:companyId" element={<PageContext2><UserStore /></PageContext2>} />
+                <Route path="/agendar/:companyId" element={<PageContext2 private><NewAppointment /></PageContext2>} />
+              </Routes>
+            </Container>
+            </MyErrorBoundary>
+          </I18nextProvider>
         </ThemeProvider>
       </BrowserRouter>
     </GlobalState>

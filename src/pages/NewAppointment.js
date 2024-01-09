@@ -39,9 +39,10 @@ const NewAppointment = ({context, pageState, navigate}) => {
     },[context.appointment.companyId]);
 
     useEffect(() => {
-        context.buildAppointment("service", form["service"]);
-        context.buildAppointment("employees", form["employees"]);
-        context.buildAppointment("appointment", form["appointment"]);
+        context.setAppointmentData(form);
+        // context.buildAppointment("service", form["service"]);
+        // context.buildAppointment("employees", form["employees"]);
+        // context.buildAppointment("appointment", form["appointment"]);
         if (
             form["service"] && form["employees"] && form["appointment"]
         ) {
@@ -169,10 +170,10 @@ const NewAppointment = ({context, pageState, navigate}) => {
                     </section>
                 }
                 {
-                    form.employees.length && 
+                    (form.employees.length && agenda.length) && 
                     <section className="schedule">
                         <h3 className="title">Selecciona un turno</h3>
-                        <Agenda select={handleAppointmentSelect} daily={true} monthly={true} weekly={true} agenda={agenda} readonly={false} context={context} update={() => null} startDayHour={!agenda.length && 9} endDayHour={!agenda.length && 11}></Agenda>
+                        <Agenda select={handleAppointmentSelect} daily={true} monthly={true} weekly={true} agenda={agenda} readonly={false} context={context} update={() => null}></Agenda>
                     </section>
                 }
                 <div className="text-center p-4 pb-0">

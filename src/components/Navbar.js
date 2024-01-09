@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { Bell, BellFill, GearFill } from 'react-bootstrap-icons';
+import { Bell, BellFill, GearFill, Person, PersonFill } from 'react-bootstrap-icons';
 import { CheckCircleFill, Search, ExclamationCircleFill } from "react-bootstrap-icons";
 import { Container, Dropdown } from "react-bootstrap";
 import { Button } from "@mui/material";
@@ -99,7 +99,7 @@ const Navbar = () => {
                                 </Dropdown>
                             </div>
                              :
-                            <Link variant="link" className="btn btn-link d-flex c-black f-700 g-3 align-items-center justify-content-center order-first order-lg-last" to={"/login"}>INICIAR SESIÓN <GearFill color="#00C4B4" className="mx-2"></GearFill></Link>
+                            <Link className="text-decoration-none" to={"/login"}><Button className="text-white d-flex align-items-center f-700 mt-lg-2" variant="contained"><strong>INICIAR SESIÓN</strong> <PersonFill color="#FFFFFF" className="mx-2"></PersonFill></Button></Link>
                         }
                     </div>
                 </div>

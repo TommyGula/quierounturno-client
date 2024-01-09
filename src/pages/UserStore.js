@@ -245,6 +245,9 @@ const UserStore = ({ context, navigate, handleShow, copyToClipboard, pageState }
                                     variant="standard"
                                     error={false}
                                     value={store.phone}
+                                    inputProps={
+                                        { readOnly: true, }
+                                    }
                                 />
                                 <div>
                                 <a href={"tel:+" + store.phone}>

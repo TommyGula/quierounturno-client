@@ -20,12 +20,17 @@ import NewAppointment from "../pages/_NewAppointment";
 import PageContext from "./PageContext";
 import { put, remove } from "../utils/axios";
 
-const Agenda = ({daily, monthly, weekly, agenda, readonly, duration, startDayHour, endDayHour, context, update, select}) => {
+const Agenda = ({daily, monthly, weekly, agenda, readonly, duration, context, update, select}) => {
     useEffect(() => {
-        //console.log(startDayHour, endDayHour)
+        if (agenda.length) {
+            setStartDayHour(new Date(agenda[0].startDate).getHours());
+            setEndDayHour(new Date(agenda[agenda.length-1].endDate).getHours());
+        }
     },[])
     const [value, setValue] = useState(0);
     const [selection, setSelection] = useState(null);
+    const [startDayHour, setStartDayHour] = useState(null);
+    const [endDayHour, setEndDayHour] = useState(null);
 
     const currentDate = new Date();
 
