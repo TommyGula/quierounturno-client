@@ -20,15 +20,15 @@ import NewAppointment from "../pages/_NewAppointment";
 import PageContext from "./PageContext";
 import { put, remove } from "../utils/axios";
 
-const Agenda = ({daily, monthly, weekly, agenda, readonly, duration, context, update, select}) => {
+const Agenda = ({daily, monthly, weekly, agenda, readonly, duration, context, update, select, selected}) => {
     useEffect(() => {
         if (agenda.length) {
             setStartDayHour(new Date(agenda[0].startDate).getHours());
             setEndDayHour(new Date(agenda[agenda.length-1].endDate).getHours());
-        }
+        };
     },[])
     const [value, setValue] = useState(0);
-    const [selection, setSelection] = useState(null);
+    const [selection, setSelection] = useState(selected);
     const [startDayHour, setStartDayHour] = useState(null);
     const [endDayHour, setEndDayHour] = useState(null);
 
@@ -59,13 +59,16 @@ const Agenda = ({daily, monthly, weekly, agenda, readonly, duration, context, up
     const Appointment = ({
         children, style, ...restProps
     }) => {
+        const isSelected = selection ? selection.startDate === restProps.data.startDate && selection.endDate === restProps.data.endDate : false;
         return(
             <Appointments.Appointment
             {...restProps}
             style={{
                 ...style,
+                cursor:restProps.data.taken ? "initial" : "pointer",
+                backgroundColor:restProps.data.taken ? "gainsboro" : (isSelected ? "rgb(0, 137, 125)" : "#00C4B4"),
             }}
-            isShaded={selection ? (selection === restProps.data ? false : true) : false}
+            isShaded={!isSelected}
             onClick={() => {
                 setSelection(restProps.data);
                 select(restProps.data);

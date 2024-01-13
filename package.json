@@ -60,5 +60,8 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://server:3000"
+  "proxy": "http://server:3000",
+  "devDependencies": {
+    "env-cmd": "^10.1.0"
+  }
 }

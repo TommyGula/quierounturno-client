@@ -79,3 +79,15 @@ Para editar:
 6) Depende de la ubicación que pusiste en el mapa, que te aparezca tu moneda y la opción USD
 7) Al crear un negocio, automáticamente se carga con el usuario como un trabajador, con todos los derechos de administrador total
 8) Modal de Info (i) al lado de cada título de Crear negocio / servicio / perfil etc. Que al clickearlo salte un modal con información de cómo cargar todo correctamente
+
+2024-01-12
+
+- Que en la vista semanal salga del día actual en adelante
+- En la vista mensual, al apretar el día, que te lleve a la vista semanal/diaria
+- El selector de fecha de la vista diaria que parezca un botón y tenga el símbolo del calendario
+- Ver bug del paymentMethod
+- Al agendar un turno, que salte un Popup con el resumen del turno y un campo para poner tu teléfono para recibir notificaciones
+- Las notificaciones se envían 2 y 1 días antes del turno (por mail y teléfono si se registró)
+------------------
+- Hacer que el turno aparezca como tomado cuando ya está tomado
+- Arreglar para que el turno aparezca en la agenda personal
