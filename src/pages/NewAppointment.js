@@ -7,7 +7,13 @@ import { handlePromises, buildEmployeeAgenda } from "../utils/helpers";
 import EmployeeSelector from "../components/EmployeeSelector";
 import Agenda from "../components/Agenda";
 
-const NewAppointment = ({ context, pageState, navigate, handleAlertShow, handleShow }) => {
+const NewAppointment = ({
+  context,
+  pageState,
+  navigate,
+  handleAlertShow,
+  handleShow,
+}) => {
   const { companyId } = useParams();
   const [selectedCurrency, setSelectedCurrency] = useState(2);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -19,15 +25,16 @@ const NewAppointment = ({ context, pageState, navigate, handleAlertShow, handleS
     service: context.appointment.service || service,
     employees: context.appointment.employees || [],
     appointment: context.appointment.appointment || null,
-    paymentMethod:1
+    paymentMethod: 1,
   });
   const [services, setServices] = useState([]);
   const [store, setStore] = useState(null);
   const [filled, setFilled] = useState(false);
-  const [agenda, setAgenda] = useState([]);
+  const [agenda, setAgenda] = useState(null);
 
   useEffect(() => {
     if (context.appointment.companyId === companyId) {
+      console.log("APPOINTMENT IS SET")
       handlePromises([getStore(), getEmployees(), getServices()])
         .then((values) => {
           pageState.setLoading(false);
@@ -41,15 +48,18 @@ const NewAppointment = ({ context, pageState, navigate, handleAlertShow, handleS
   }, [context.appointment.companyId]);
 
   useEffect(() => {
-    context.setAppointmentData(form);
-    // context.buildAppointment("service", form["service"]);
-    // context.buildAppointment("employees", form["employees"]);
-    // context.buildAppointment("appointment", form["appointment"]);
-    if (form["service"] && form["employees"] && form["appointment"]) {
-      setFilled(true);
-    } else {
-      setFilled(false);
-    }
+    if (context.appointment.companyId === companyId) {
+
+      context.setAppointmentData(form);
+      // context.buildAppointment("service", form["service"]);
+      // context.buildAppointment("employees", form["employees"]);
+      // context.buildAppointment("appointment", form["appointment"]);
+      if (form["service"] && form["employees"] && form["appointment"]) {
+        setFilled(true);
+      } else {
+        setFilled(false);
+      }
+    };
   }, Object.values(form));
 
   const updateForm = (key, val) => {
@@ -89,19 +99,29 @@ const NewAppointment = ({ context, pageState, navigate, handleAlertShow, handleS
     });
   };
 
-  const getAgenda = (employee) => {
-    const t = new Date();
-    t.setDate(t.getDate() - t.getDay());
+  const handleAgenda = (startDate, view) => {
+    console.log("FORM ", form.employees[0])
+    getAgenda(form.employees[0], startDate, view);
+  };
+
+  const getAgenda = (employee, t = new Date(), view = 0) => {
+    //t.setDate(t.getDate() - t.getDay());
     get(
       "appointments/agenda?employeeId=" +
-        employee._id +
+        employee +
         "&serviceId=" +
-        service +
+        form.service +
         "&startDate=" +
-        t.toISOString().split("T")[0],
+        t.toISOString().split("T")[0] +
+        "&view=" +
+        view,
+
       context.token,
       (data) => {
-        console.log("TAKEN!!! ", data.filter(a=>a.taken))
+        console.log(
+          "TAKEN!!! ",
+          data.filter((a) => a.taken)
+        );
         setAgenda(data);
       }
     );
@@ -110,7 +130,7 @@ const NewAppointment = ({ context, pageState, navigate, handleAlertShow, handleS
   const handleEmployeeSelect = (employee = null) => {
     if (employee) {
       updateForm("employees", [employee._id]);
-      getAgenda(employee);
+      getAgenda(employee._id);
     }
   };
 
@@ -130,7 +150,7 @@ const NewAppointment = ({ context, pageState, navigate, handleAlertShow, handleS
                 setEmployees(employeesUser);
               }
               if (form.employees.includes(employee._id)) {
-                getAgenda(employee);
+                getAgenda(employee._id);
               }
               /*                         if (employee.role === "OWNER") {
                             context.buildAppointment("employees", [employee]);
@@ -195,7 +215,7 @@ const NewAppointment = ({ context, pageState, navigate, handleAlertShow, handleS
         //post("preferences", context.token, )
       } else if (selectedCurrency === 2) {
         const appointmentBody = {
-          name: services.filter(s=>s._id === form.service)[0].name,
+          name: services.filter((s) => s._id === form.service)[0].name,
           companyId: context.appointment.companyId,
           employees: context.appointment.employees,
           serviceId: context.appointment.service,
@@ -203,7 +223,7 @@ const NewAppointment = ({ context, pageState, navigate, handleAlertShow, handleS
           createdAt: new Date().toISOString(),
           date: context.appointment.appointment.startDate.split("T")[0],
           from: context.appointment.appointment.startDate,
-          to: context.appointment.appointment.endDate,   
+          to: context.appointment.appointment.endDate,
           taken: true,
           takenBy: context.user._id,
         };
@@ -265,16 +285,17 @@ const NewAppointment = ({ context, pageState, navigate, handleAlertShow, handleS
               )}
             </section>
           )}
-          {form.employees.length && agenda.length && (
+          {form.employees.length && agenda && (
             <section className="schedule">
               <h3 className="title">Selecciona un turno</h3>
               <Agenda
                 select={handleAppointmentSelect}
+                handleAgenda={handleAgenda}
                 daily={true}
                 monthly={true}
                 weekly={true}
                 agenda={agenda}
-                readonly={false}
+                readonly={true}
                 context={context}
                 update={() => null}
                 selected={form.appointment}

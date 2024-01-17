@@ -46,7 +46,7 @@ const UserAgenda = ({context}) => {
                 !loading ?
                 <div className="p-4">
                     <SectionTitle title={"Mi agenda"}></SectionTitle>
-                    <Agenda agenda={agenda} readonly={false} context={context} update={getAgenda}></Agenda>
+                    <Agenda handleAgenda={() => null} agenda={agenda} daily={true} weekly={true} select={() => null} readonly={false} selected={false} context={context} update={getAgenda}></Agenda>
 
                 </div> : null
             }

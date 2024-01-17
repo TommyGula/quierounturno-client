@@ -51,6 +51,7 @@ const GlobalState = ({children}) => {
     }
 
     const setAppointmentData = (data, cb) => {
+        console.log("SET APP DATA  ", appointment, data)
         setAppointment({...appointment, ...data});
         localStorage.setItem("appointment", JSON.stringify({...appointment, ...data}));
         if (cb) {

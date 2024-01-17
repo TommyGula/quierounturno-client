@@ -20,7 +20,7 @@ import NewAppointment from "../pages/_NewAppointment";
 import PageContext from "./PageContext";
 import { put, remove } from "../utils/axios";
 
-const Agenda = ({daily, monthly, weekly, agenda, readonly, duration, context, update, select, selected}) => {
+const Agenda = ({daily, monthly, weekly, agenda, readonly, duration, context, update, select, selected, handleAgenda}) => {
     useEffect(() => {
         if (agenda.length) {
             setStartDayHour(new Date(agenda[0].startDate).getHours());
@@ -31,29 +31,36 @@ const Agenda = ({daily, monthly, weekly, agenda, readonly, duration, context, up
     const [selection, setSelection] = useState(selected);
     const [startDayHour, setStartDayHour] = useState(null);
     const [endDayHour, setEndDayHour] = useState(null);
-
-    const currentDate = new Date();
+    const [currentDate, setCurrentDate] = useState(new Date());
 
     const AppointmentElements = () => {
-        return [
-            <Appointments
-                appointmentComponent={Appointment}
-            />,
-            <EditingState
-            onCommitChanges={commitChanges}
-            />,
-            <IntegratedEditing />,
-            <ConfirmationDialog />,
-            <AppointmentTooltip
-                showCloseButton
-                showOpenButton
-                showDeleteButton
-            />,
-            <AppointmentForm
-                basicLayoutComponent={EditingForm}
-                showDeleteButton={false}
-            />
-        ]
+        if (readonly) {
+            return [
+                <Appointments
+                    appointmentComponent={Appointment}
+                /> 
+            ]
+        } else {
+            return [
+                <Appointments
+                    appointmentComponent={Appointment}
+                />,
+                <EditingState
+                onCommitChanges={commitChanges}
+                />,
+                <IntegratedEditing />,
+                <ConfirmationDialog />,
+                <AppointmentTooltip
+                    showCloseButton
+                    showOpenButton
+                    showDeleteButton
+                />,
+                <AppointmentForm
+                    basicLayoutComponent={EditingForm}
+                    showDeleteButton={false}
+                />
+            ]
+        }
     }
 
     const Appointment = ({
@@ -101,6 +108,12 @@ const Agenda = ({daily, monthly, weekly, agenda, readonly, duration, context, up
 
     const handleTabChange = (event, newValue) => {
         setValue(newValue);
+        handleAgenda(currentDate, newValue);
+    };
+
+    const handleDateChange = (date) => {
+        handleAgenda(date, value);
+        setCurrentDate(date);
     };
 
     const commitChanges = ({ added, changed, deleted }) => {
@@ -167,6 +180,7 @@ const Agenda = ({daily, monthly, weekly, agenda, readonly, duration, context, up
                         >
                             <ViewState
                                 defaultCurrentDate={currentDate}
+                                onCurrentDateChange={handleDateChange}
                             />
                             <DayView
                                 startDayHour={startDayHour || 0}
@@ -174,7 +188,7 @@ const Agenda = ({daily, monthly, weekly, agenda, readonly, duration, context, up
                                 duration={duration || 30}
                             />
                             <Toolbar style={{paddingLeft:"0 !important"}} />
-                            <DateNavigator />
+                            <DateNavigator onNavigate={handleDateChange}/>
                             <TodayButton />
                             {AppointmentElements()}
                         </Scheduler>
@@ -183,7 +197,11 @@ const Agenda = ({daily, monthly, weekly, agenda, readonly, duration, context, up
                     {
                         weekly &&
                         <TabPanel value={value} index={daily ? 1 : 0}>
-                            <Scheduler data={agenda} >
+                            <Scheduler data={agenda} firstDayOfWeek={currentDate.getDay()}>
+                                <ViewState
+                                    defaultCurrentDate={currentDate}
+                                    onCurrentDateChange={handleDateChange}
+                                />
                                 <WeekView startDayHour={startDayHour || 9} endDayHour={endDayHour || 19} />
                                 {AppointmentElements().map(el => el)}
                             </Scheduler>
@@ -197,6 +215,7 @@ const Agenda = ({daily, monthly, weekly, agenda, readonly, duration, context, up
                                 >
                                 <ViewState
                                     defaultCurrentDate={currentDate}
+                                    onCurrentDateChange={handleDateChange}
                                 />
                                 <Toolbar />
                                 <DateNavigator />
