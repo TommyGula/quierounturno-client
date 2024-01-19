@@ -16,17 +16,21 @@ import {
   AppointmentForm,
   ConfirmationDialog,
 } from '@devexpress/dx-react-scheduler-material-ui';
-import NewAppointment from "../pages/_NewAppointment";
-import PageContext from "./PageContext";
+import AppointmentDetails from "../pages/AppointmentDetails";
 import { put, remove } from "../utils/axios";
 
 const Agenda = ({daily, monthly, weekly, agenda, readonly, duration, context, update, select, selected, handleAgenda}) => {
     useEffect(() => {
         if (agenda.length) {
-            setStartDayHour(new Date(agenda[0].startDate).getHours());
-            setEndDayHour(new Date(agenda[agenda.length-1].endDate).getHours());
-        };
-    },[])
+            const firstHour = new Date(agenda[0].startDate).getHours() - 1;
+            const lastHour = new Date(agenda[agenda.length-1].endDate).getHours() + 1;
+            setStartDayHour(firstHour);
+            setEndDayHour(lastHour);
+        } else {
+            setStartDayHour(1);
+            setEndDayHour(1.5);
+        }
+    },[agenda])
     const [value, setValue] = useState(0);
     const [selection, setSelection] = useState(selected);
     const [startDayHour, setStartDayHour] = useState(null);
@@ -78,7 +82,12 @@ const Agenda = ({daily, monthly, weekly, agenda, readonly, duration, context, up
             isShaded={!isSelected}
             onClick={() => {
                 setSelection(restProps.data);
-                select(restProps.data);
+                if (value !== 2) {
+                    select(restProps.data);
+                } else {
+                    handleTabChange(null, 0, new Date(restProps.data.startDate));
+                    //console.log("MONTH CLICKED ", restProps)
+                }
             }}
             >
             {children}
@@ -106,9 +115,12 @@ const Agenda = ({daily, monthly, weekly, agenda, readonly, duration, context, up
         );
     };
 
-    const handleTabChange = (event, newValue) => {
+    const handleTabChange = (event, newValue, date=null) => {
         setValue(newValue);
-        handleAgenda(currentDate, newValue);
+        handleAgenda((date || currentDate), newValue);
+        if (date) {
+            setCurrentDate(date);
+        }
     };
 
     const handleDateChange = (date) => {
@@ -138,13 +150,9 @@ const Agenda = ({daily, monthly, weekly, agenda, readonly, duration, context, up
     };
 
     const EditingForm = ({ children, onFieldChange, appointmentData, ...restProps }) => {
-        if (appointmentData) {
-            console.log("APPOINTMENT DATA ", appointmentData);
-            //context.setAppointmentData(appointmentData);
-        }
         return (
             <div className="custom-layout w-100">
-                <PageContext containerClass="px-0" private embed><NewAppointment /></PageContext>
+                <AppointmentDetails appointmentId={appointmentData.id} context={context}></AppointmentDetails>
             </div>
         );
     }
@@ -159,7 +167,7 @@ const Agenda = ({daily, monthly, weekly, agenda, readonly, duration, context, up
                         <Tabs value={value} onChange={handleTabChange} aria-label="">
                             {
                                 daily &&
-                                <Tab label="Hoy" />
+                                <Tab label="Día" />
                             }
                             {
                                 weekly &&
@@ -190,7 +198,9 @@ const Agenda = ({daily, monthly, weekly, agenda, readonly, duration, context, up
                             <Toolbar style={{paddingLeft:"0 !important"}} />
                             <DateNavigator onNavigate={handleDateChange}/>
                             <TodayButton />
-                            {AppointmentElements()}
+                            {
+                                AppointmentElements()
+                            }
                         </Scheduler>
                     </TabPanel>
                     }

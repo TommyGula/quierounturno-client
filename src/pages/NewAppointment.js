@@ -13,6 +13,7 @@ const NewAppointment = ({
   navigate,
   handleAlertShow,
   handleShow,
+  setRedirect,
 }) => {
   const { companyId } = useParams();
   const [selectedCurrency, setSelectedCurrency] = useState(2);
@@ -34,7 +35,7 @@ const NewAppointment = ({
 
   useEffect(() => {
     if (context.appointment.companyId === companyId) {
-      console.log("APPOINTMENT IS SET")
+      setRedirect("/mis-turnos")
       handlePromises([getStore(), getEmployees(), getServices()])
         .then((values) => {
           pageState.setLoading(false);
@@ -100,12 +101,17 @@ const NewAppointment = ({
   };
 
   const handleAgenda = (startDate, view) => {
-    console.log("FORM ", form.employees[0])
+    //setAgenda([{}]);
     getAgenda(form.employees[0], startDate, view);
   };
 
   const getAgenda = (employee, t = new Date(), view = 0) => {
-    //t.setDate(t.getDate() - t.getDay());
+    t.setHours(0,0,0);
+    if (view != undefined) {
+      setAgenda([]);
+    } else {
+      view = 0;
+    }
     get(
       "appointments/agenda?employeeId=" +
         employee +
@@ -118,11 +124,24 @@ const NewAppointment = ({
 
       context.token,
       (data) => {
-        console.log(
-          "TAKEN!!! ",
-          data.filter((a) => a.taken)
-        );
-        setAgenda(data);
+        if (data.message) {
+          setAgenda([]);
+          handleAlertShow(data.message, "error");
+        } else {
+          setAgenda(data);
+          if (view < 2) {
+            const available = data.filter(d=>!d.taken && d.startDate.split("T")[0] === t.toISOString().split("T")[0]).length;
+            if (available) {
+              handleAlertShow("Se encontraron " + available + " turnos disponibles", "success");
+            } else {
+              if (t < new Date()) {
+                handleAlertShow("No hay turnos disponibles para una fecha pasada.", "warning")
+              } else {
+                handleAlertShow("No se encontraron turnos disponibles para la fecha en cuestión.", "error");
+              }
+            }
+          }
+        }
       }
     );
   };

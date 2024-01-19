@@ -51,7 +51,7 @@ const App = () => {
                 <Route path="/" element={<PageContext2 embed noLoad><Home /></PageContext2>} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/registro" element={<Register />} />
-                <Route path="/mis-turnos" element={<PageContext><UserAgenda/></PageContext>} />
+                <Route path="/mis-turnos" element={<PageContext private><UserAgenda/></PageContext>} />
                 <Route path="/mi-perfil" element={<PageContext2 private><UserProfile/></PageContext2>} />
                 <Route path="/pago/:id" element={<Payment />} />
                 <Route path="/:companyId" element={<PageContext2><UserStore /></PageContext2>} />

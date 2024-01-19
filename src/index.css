@@ -259,6 +259,10 @@ input[type=number] {
   transform: scale(105%);
 }
 
+.MuiAlert-filledPrimary {
+  color: white !important;
+}
+
 .currency {
   cursor: pointer;
 }
