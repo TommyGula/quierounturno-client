@@ -8,7 +8,13 @@ const MyModal = (props) => {
             <Modal.Header closeButton>
                 <Modal.Title>{props.title}</Modal.Title>
             </Modal.Header>
-            <Modal.Body>{props.description}</Modal.Body>
+            <Modal.Body>
+                {props.description}
+                {
+                    props.content && 
+                    props.content
+                }
+            </Modal.Body>
             <Modal.Footer>
                 {
                     props.secondary ?
@@ -19,7 +25,7 @@ const MyModal = (props) => {
                 }
                 {
                     props.primary ?
-                    <Button variant="contained" onClick={props.handlePrimary}>
+                    <Button variant="contained" color="primary" onClick={props.handlePrimary}>
                         {props.primary}
                     </Button> :
                     null

@@ -17,6 +17,7 @@ const PageContext = (props) => {
     const [redirect, setRedirect] = useState(null);
     const [modalTitle, setModalTitle] = useState(null);
     const [modalDescription, setModalDescription] = useState(null);
+    const [modalContent, setModalContent] = useState(null);
     const [alertShow, setAlertShow] = useState(false);
     const [alertMessage, setAlertMessage] = useState(null);
     const [alertType, setAlertType] = useState(null);
@@ -59,9 +60,10 @@ const PageContext = (props) => {
         };
     };
     
-    const handleShow = (title, description) => {
+    const handleShow = (title, description, content=null) => {
         setModalTitle(title);
         setModalDescription(description);
+        setModalContent(content);
         setShow(true);
     };
     

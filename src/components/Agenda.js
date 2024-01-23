@@ -2,35 +2,36 @@ import React, { useEffect, useState } from "react";
 import Spinner from "./Spinner";
 import SectionTitle from "./SectionTitle";
 import { Box, Tabs, Tab, Typography, TextField } from "@mui/material";
-import { ViewState,EditingState,IntegratedEditing } from '@devexpress/dx-react-scheduler';
+import { ViewState, EditingState, IntegratedEditing } from '@devexpress/dx-react-scheduler';
 import {
-  Scheduler,
-  DayView,
-  WeekView,
-  MonthView,
-  Appointments,
-  Toolbar,
-  TodayButton,
-  DateNavigator,
-  AppointmentTooltip,
-  AppointmentForm,
-  ConfirmationDialog,
+    Scheduler,
+    DayView,
+    WeekView,
+    MonthView,
+    Appointments,
+    Toolbar,
+    TodayButton,
+    DateNavigator,
+    AppointmentTooltip,
+    AppointmentForm,
+    ConfirmationDialog,
 } from '@devexpress/dx-react-scheduler-material-ui';
 import AppointmentDetails from "../pages/AppointmentDetails";
 import { put, remove } from "../utils/axios";
 
-const Agenda = ({daily, monthly, weekly, agenda, readonly, duration, context, update, select, selected, handleAgenda}) => {
+const Agenda = ({ daily, monthly, weekly, agenda, readonly, duration, context, update, select, selected, handleAgenda }) => {
     useEffect(() => {
+        console.log("USER AGENDA ", agenda)
         if (agenda.length) {
             const firstHour = new Date(agenda[0].startDate).getHours() - 1;
-            const lastHour = new Date(agenda[agenda.length-1].endDate).getHours() + 1;
+            const lastHour = new Date(agenda[agenda.length - 1].endDate).getHours() + 1;
             setStartDayHour(firstHour);
             setEndDayHour(lastHour);
         } else {
             setStartDayHour(1);
             setEndDayHour(1.5);
         }
-    },[agenda])
+    }, [agenda])
     const [value, setValue] = useState(0);
     const [selection, setSelection] = useState(selected);
     const [startDayHour, setStartDayHour] = useState(null);
@@ -42,7 +43,7 @@ const Agenda = ({daily, monthly, weekly, agenda, readonly, duration, context, up
             return [
                 <Appointments
                     appointmentComponent={Appointment}
-                /> 
+                />
             ]
         } else {
             return [
@@ -50,7 +51,7 @@ const Agenda = ({daily, monthly, weekly, agenda, readonly, duration, context, up
                     appointmentComponent={Appointment}
                 />,
                 <EditingState
-                onCommitChanges={commitChanges}
+                    onCommitChanges={commitChanges}
                 />,
                 <IntegratedEditing />,
                 <ConfirmationDialog />,
@@ -71,51 +72,51 @@ const Agenda = ({daily, monthly, weekly, agenda, readonly, duration, context, up
         children, style, ...restProps
     }) => {
         const isSelected = selection ? selection.startDate === restProps.data.startDate && selection.endDate === restProps.data.endDate : false;
-        return(
+        return (
             <Appointments.Appointment
-            {...restProps}
-            style={{
-                ...style,
-                cursor:restProps.data.taken ? "initial" : "pointer",
-                backgroundColor:restProps.data.taken ? "gainsboro" : (isSelected ? "rgb(0, 137, 125)" : "#00C4B4"),
-            }}
-            isShaded={!isSelected}
-            onClick={() => {
-                setSelection(restProps.data);
-                if (value !== 2) {
-                    select(restProps.data);
-                } else {
-                    handleTabChange(null, 0, new Date(restProps.data.startDate));
-                    //console.log("MONTH CLICKED ", restProps)
-                }
-            }}
+                {...restProps}
+                style={{
+                    ...style,
+                    cursor: restProps.data.taken ? "initial" : "pointer",
+                    backgroundColor: restProps.data.taken ? "gainsboro" : (isSelected ? "rgb(0, 137, 125)" : "#00C4B4"),
+                }}
+                isShaded={!isSelected}
+                onClick={() => {
+                    setSelection(restProps.data);
+                    if (value !== 2) {
+                        select(restProps.data);
+                    } else {
+                        handleTabChange(null, 0, new Date(restProps.data.startDate));
+                        //console.log("MONTH CLICKED ", restProps)
+                    }
+                }}
             >
-            {children}
+                {children}
             </Appointments.Appointment>
         );
     };
 
     function TabPanel(props) {
         const { children, value, index, ...other } = props;
-      
+
         return (
-          <div
-            role="tabpanel"
-            hidden={value !== index}
-            id={`simple-tabpanel-${index}`}
-            aria-labelledby={`simple-tab-${index}`}
-            {...other}
-          >
-            {value === index && (
-              <Box sx={{ p: 3 }}>
-                <Typography>{children}</Typography>
-              </Box>
-            )}
-          </div>
+            <div
+                role="tabpanel"
+                hidden={value !== index}
+                id={`simple-tabpanel-${index}`}
+                aria-labelledby={`simple-tab-${index}`}
+                {...other}
+            >
+                {value === index && (
+                    <Box sx={{ p: 3 }}>
+                        <Typography>{children}</Typography>
+                    </Box>
+                )}
+            </div>
         );
     };
 
-    const handleTabChange = (event, newValue, date=null) => {
+    const handleTabChange = (event, newValue, date = null) => {
         setValue(newValue);
         handleAgenda((date || currentDate), newValue);
         if (date) {
@@ -157,85 +158,85 @@ const Agenda = ({daily, monthly, weekly, agenda, readonly, duration, context, up
         );
     }
 
-    return(
+    return (
         <div className="agenda">
             <Spinner hidden={agenda}></Spinner>
             {
                 agenda ?
-                <div>
-                    <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                        <Tabs value={value} onChange={handleTabChange} aria-label="">
-                            {
-                                daily &&
-                                <Tab label="Día" />
-                            }
-                            {
-                                weekly &&
-                                <Tab label="Semana" />
-                            }
-                            {
-                                monthly &&
-                                <Tab label="Mes" />
-                            }
-                        </Tabs>
-                    </Box>
-                    {
-                        daily &&
-                    <TabPanel value={value} index={0}>
-                        <Scheduler
-                        data={agenda}
-                        style={{}}
-                        >
-                            <ViewState
-                                defaultCurrentDate={currentDate}
-                                onCurrentDateChange={handleDateChange}
-                            />
-                            <DayView
-                                startDayHour={startDayHour || 0}
-                                endDayHour={endDayHour || 24}
-                                duration={duration || 30}
-                            />
-                            <Toolbar style={{paddingLeft:"0 !important"}} />
-                            <DateNavigator onNavigate={handleDateChange}/>
-                            <TodayButton />
-                            {
-                                AppointmentElements()
-                            }
-                        </Scheduler>
-                    </TabPanel>
-                    }
-                    {
-                        weekly &&
-                        <TabPanel value={value} index={daily ? 1 : 0}>
-                            <Scheduler data={agenda} firstDayOfWeek={currentDate.getDay()}>
-                                <ViewState
-                                    defaultCurrentDate={currentDate}
-                                    onCurrentDateChange={handleDateChange}
-                                />
-                                <WeekView startDayHour={startDayHour || 9} endDayHour={endDayHour || 19} />
-                                {AppointmentElements().map(el => el)}
-                            </Scheduler>
-                        </TabPanel>
-                    }
-                    {
-                        monthly &&
-                        <TabPanel value={value} index={daily && weekly ? 2 : 0}>
-                            <Scheduler
-                                data={agenda}
+                    <div>
+                        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                            <Tabs value={value} onChange={handleTabChange} aria-label="">
+                                {
+                                    daily &&
+                                    <Tab label="Día" />
+                                }
+                                {
+                                    weekly &&
+                                    <Tab label="Semana" />
+                                }
+                                {
+                                    monthly &&
+                                    <Tab label="Mes" />
+                                }
+                            </Tabs>
+                        </Box>
+                        {
+                            daily &&
+                            <TabPanel value={value} index={0}>
+                                <Scheduler
+                                    data={agenda}
+                                    style={{}}
                                 >
-                                <ViewState
-                                    defaultCurrentDate={currentDate}
-                                    onCurrentDateChange={handleDateChange}
-                                />
-                                <Toolbar />
-                                <DateNavigator />
-                                <TodayButton />
-                                <MonthView />
-                                {AppointmentElements()}
-                            </Scheduler>
-                        </TabPanel>
-                    }
-                </div> : null
+                                    <ViewState
+                                        defaultCurrentDate={currentDate}
+                                        onCurrentDateChange={handleDateChange}
+                                    />
+                                    <DayView
+                                        startDayHour={startDayHour || 0}
+                                        endDayHour={endDayHour || 24}
+                                        duration={duration || 30}
+                                    />
+                                    <Toolbar style={{ paddingLeft: "0 !important" }} />
+                                    <DateNavigator onNavigate={handleDateChange} />
+                                    <TodayButton />
+                                    {
+                                        AppointmentElements()
+                                    }
+                                </Scheduler>
+                            </TabPanel>
+                        }
+                        {
+                            weekly &&
+                            <TabPanel value={value} index={daily ? 1 : 0}>
+                                <Scheduler data={agenda} firstDayOfWeek={currentDate.getDay()}>
+                                    <ViewState
+                                        defaultCurrentDate={currentDate}
+                                        onCurrentDateChange={handleDateChange}
+                                    />
+                                    <WeekView startDayHour={startDayHour || 9} endDayHour={endDayHour || 19} />
+                                    {AppointmentElements().map(el => el)}
+                                </Scheduler>
+                            </TabPanel>
+                        }
+                        {
+                            monthly &&
+                            <TabPanel value={value} index={daily && weekly ? 2 : 0}>
+                                <Scheduler
+                                    data={agenda}
+                                >
+                                    <ViewState
+                                        defaultCurrentDate={currentDate}
+                                        onCurrentDateChange={handleDateChange}
+                                    />
+                                    <Toolbar />
+                                    <DateNavigator />
+                                    <TodayButton />
+                                    <MonthView />
+                                    {AppointmentElements()}
+                                </Scheduler>
+                            </TabPanel>
+                        }
+                    </div> : null
             }
         </div>
     )

@@ -2,10 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { Button } from "@mui/material";
 import ItemsListDropdown from "../components/ItemsListDropdown";
-import { get, post } from "../utils/axios";
+import { get, post, put } from "../utils/axios";
 import { handlePromises, buildEmployeeAgenda } from "../utils/helpers";
 import EmployeeSelector from "../components/EmployeeSelector";
 import Agenda from "../components/Agenda";
+import {TextField} from "@mui/material";
+import MyModal from "../components/MyModal";
 
 const NewAppointment = ({
   context,
@@ -32,10 +34,10 @@ const NewAppointment = ({
   const [store, setStore] = useState(null);
   const [filled, setFilled] = useState(false);
   const [agenda, setAgenda] = useState(null);
+  const [formModalSubmit, setFormModalSubmit] = useState();
 
   useEffect(() => {
     if (context.appointment.companyId === companyId) {
-      setRedirect("/mis-turnos")
       handlePromises([getStore(), getEmployees(), getServices()])
         .then((values) => {
           pageState.setLoading(false);
@@ -216,54 +218,75 @@ const NewAppointment = ({
     updateForm("appointment", a);
   };
 
+  const getFormModalSubmit = () => {
+    const phoneExists = context.user.phone;
+    const description = phoneExists ? "Se le notificará horas antes del horario acordado." : "Por favor deje su número de teléfono para que podamos notificarle horas antes del horario acordado.";
+    return (
+    <MyModal title={"Está por agendar un turno"} description={description} content={!phoneExists && <form action="" className="pt-4">
+    <TextField id="phone" label="Número de teléfono" onChange={(e) => setForm({...form, phone:e.target.value})} placeholder={"Número de teléfono"} color="primary" className="w-100" focused />
+  </form>} show={true} onHide={() => setFormModalSubmit(null)} primary={"ACEPTAR"} handlePrimary={
+    () => {
+      if (true) {
+        if (!phoneExists && form.phone) {
+          put("users/" + context.user._id, context.token, {
+            phone:form.phone
+          }, (data) => {
+            console.log("Phone updated! " + data);
+          })
+        };
+        if (selectedCurrency === 1) {
+          const preferenceBody = [
+            {
+              title: context.appointment.service.name,
+              description: context.appointment.service.description,
+              picture_url:
+                process.env.REACT_APP_BACKEND_PATH + "uploads/" + store.logo,
+              quantity: 1,
+              currency_id: context.appointment.service.currencyId || "$",
+              unit_price: context.appointment.service.price,
+            },
+          ];
+          //post("preferences", context.token, )
+        } else if (selectedCurrency === 2) {
+          const appointmentBody = {
+            name: services.filter((s) => s._id === form.service)[0].name,
+            companyId: context.appointment.companyId,
+            employees: context.appointment.employees,
+            serviceId: context.appointment.service,
+            createdBy: context.user._id,
+            createdAt: new Date().toISOString(),
+            date: context.appointment.appointment.startDate.split("T")[0],
+            from: context.appointment.appointment.startDate,
+            to: context.appointment.appointment.endDate,
+            taken: true,
+            takenBy: context.user._id,
+          };
+          post("appointments", context.token, appointmentBody, (res) => {
+            if (!res.message) {
+              handleReset();
+              //handleShow("Felicitaciones", "Acabas de agendar un turno");
+              navigate("/mis-turnos?init_message=Se%20ha%20registrado%20un%20nuevo%20turno");
+            } else {
+              handleAlertShow(res.message, "error");
+            }
+          });
+        }
+      } else {
+        handleAlertShow("Debe seleccionar un método de pago", "error");
+      }
+      }
+  }></MyModal>)
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (true) {
-      if (selectedCurrency === 1) {
-        const preferenceBody = [
-          {
-            title: context.appointment.service.name,
-            description: context.appointment.service.description,
-            picture_url:
-              process.env.REACT_APP_BACKEND_PATH + "uploads/" + store.logo,
-            quantity: 1,
-            currency_id: context.appointment.service.currencyId || "$",
-            unit_price: context.appointment.service.price,
-          },
-        ];
-        //post("preferences", context.token, )
-      } else if (selectedCurrency === 2) {
-        const appointmentBody = {
-          name: services.filter((s) => s._id === form.service)[0].name,
-          companyId: context.appointment.companyId,
-          employees: context.appointment.employees,
-          serviceId: context.appointment.service,
-          createdBy: context.user._id,
-          createdAt: new Date().toISOString(),
-          date: context.appointment.appointment.startDate.split("T")[0],
-          from: context.appointment.appointment.startDate,
-          to: context.appointment.appointment.endDate,
-          taken: true,
-          takenBy: context.user._id,
-        };
-        post("appointments", context.token, appointmentBody, (res) => {
-          if (!res.message) {
-            handleReset();
-            handleShow("Felicitaciones", "Acabas de agendar un turno");
-            //navigate("/mis-turnos");
-          } else {
-            handleAlertShow(res.message, "error");
-          }
-        });
-      }
-    } else {
-      handleAlertShow("Debe seleccionar un método de pago", "error");
-    }
+    setFormModalSubmit(getFormModalSubmit());
   };
 
   if (!pageState.loading && store) {
     return (
       <div className="new-appointment p-4 pb-5">
+        {formModalSubmit}
         <form action="" onSubmit={handleSubmit}>
           <ItemsListDropdown
             image={(src) =>

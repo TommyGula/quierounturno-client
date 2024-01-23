@@ -24,6 +24,7 @@ const PageContext2 = (props) => {
     const [redirect, setRedirect] = useState(null);
     const [modalTitle, setModalTitle] = useState(null);
     const [modalDescription, setModalDescription] = useState(null);
+    const [modalContent, setModalContent] = useState(null);
     const [alertShow, setAlertShow] = useState(false);
     const [alertMessage, setAlertMessage] = useState(null);
     const [alertType, setAlertType] = useState(null);
@@ -62,9 +63,10 @@ const PageContext2 = (props) => {
         };
     };
     
-    const handleShow = (title, description) => {
+    const handleShow = (title, description, content=null) => {
         setModalTitle(title);
         setModalDescription(description);
+        setModalContent(content);
         setShow(true);
     };
     
@@ -86,11 +88,11 @@ const PageContext2 = (props) => {
 
     const pageState = { loading, setLoading }
 
-    const methods = { context, navigate, show, setShow, redirect, setRedirect, modalTitle, setModalTitle, modalDescription, setModalDescription, handleClose, handleShow, onPageError, handleAlertClose, handleAlertShow, handleSeeMore, seeMore, copyToClipboard, pageState:pageState };
+    const methods = { context, navigate, show, setShow, redirect, setRedirect, modalTitle, setModalTitle, modalDescription, setModalDescription, modalContent, setModalContent, handleClose, handleShow, onPageError, handleAlertClose, handleAlertShow, handleSeeMore, seeMore, copyToClipboard, pageState:pageState };
 
     return(
         <div className="page-context mb-5">
-            <MyModal title={modalTitle} description={modalDescription} show={show} onHide={handleClose} primary={"ACEPTAR"} handlePrimary={handleClose}></MyModal>
+            <MyModal title={modalTitle} description={modalDescription} content={modalContent} show={show} onHide={handleClose} primary={"ACEPTAR"} handlePrimary={handleClose}></MyModal>
             <MySnackbar message={alertMessage} type={alertType} open={alertShow} setAlertShow={setAlertShow} duration={alertDuration}></MySnackbar>
             <div className={"mobile-container container py-4 " + props.containerClass}>
                 {

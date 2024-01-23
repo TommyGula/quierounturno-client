@@ -6,32 +6,30 @@ import { useParams } from "react-router-dom";
 import Agenda from "../components/Agenda";
 
 
-const UserAgenda = ({context}) => {
+const UserAgenda = ({ context }) => {
     const [agenda, setAgenda] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         getAgenda();
-    },[]);
+    }, []);
 
     const getAgenda = () => {
         get("appointments/?takenBy=" + context.user._id, context.token, (data) => {
             if (data.length) {
-                data.reduce((r,a) => {
+                const agendaData = data.reduce((r, a) => {
                     var t = {};
-                    //var itemNames = getRelatedServiceAndStore(a.companyId, a.serviceId);
-                    t["startDate"] = new Date(a.from);
-                    t["endDate"] = new Date(a.to);
-                    t["title"] = a.name;
+                    t["startDate"] = new Date(a.from).toISOString();
+                    t["endDate"] = new Date(a.to).toISOString();
+                    t["title"] = a.name || "Servicio";
                     t["id"] = a._id;
                     r.push(t);
-                    setAgenda([... agenda, t]);
                     return r;
-                },[]);
-
+                }, []);
                 setTimeout(() => {
+                    setAgenda(agendaData);
                     setLoading(false);
-                }, 500)
+                }, 500);
             } else {
                 setAgenda([]);
                 setLoading(false);
@@ -39,16 +37,16 @@ const UserAgenda = ({context}) => {
         });
     };
 
-    return(
+    return (
         <div className="my-agenda">
             <Spinner hidden={!loading}></Spinner>
             {
                 !loading ?
-                <div className="p-4">
-                    <SectionTitle title={"Mi agenda"}></SectionTitle>
-                    <Agenda handleAgenda={() => null} agenda={agenda} daily={true} weekly={true} select={() => null} readonly={false} selected={false} context={context} update={getAgenda}></Agenda>
+                    <div className="p-4">
+                        <SectionTitle title={"Mi agenda"}></SectionTitle>
+                        <Agenda handleAgenda={() => null} agenda={agenda} daily={true} weekly={true} select={() => null} readonly={false} selected={false} context={context} update={getAgenda}></Agenda>
 
-                </div> : null
+                    </div> : null
             }
         </div>
     )
