@@ -91,3 +91,5 @@ Para editar:
 ------------------
 - Hacer que el turno aparezca como tomado cuando ya está tomado
 - Arreglar para que el turno aparezca en la agenda personal
+
+- En Agenda.js el firstHour y lastHour tienen que ser sí o sí con los datos del currentDate

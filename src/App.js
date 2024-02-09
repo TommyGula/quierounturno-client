@@ -19,8 +19,8 @@ import StoreList from "./pages/StoreList";
 import UserStore from "./pages/UserStore";
 import UserProfile from "./pages/UserProfile";
 import NewAppointment from "./pages/NewAppointment";
+import UserAppointments from "./pages/UserAppointments";
 import UserAgenda from "./pages/UserAgenda";
-import Admin from "./pages/AdminHttp";
 
 // Components
 import Navbar from "./components/Navbar";
@@ -51,7 +51,8 @@ const App = () => {
                 <Route path="/" element={<PageContext2 embed noLoad><Home /></PageContext2>} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/registro" element={<Register />} />
-                <Route path="/mis-turnos" element={<PageContext private><UserAgenda/></PageContext>} />
+                <Route path="/mis-turnos" element={<PageContext2 private redirect="/mis-turnos/calendario" redirectCta="Calendario"><UserAppointments/></PageContext2>} />
+                <Route path="/mis-turnos/calendario" element={<PageContext private><UserAgenda/></PageContext>} />
                 <Route path="/mi-perfil" element={<PageContext2 private><UserProfile/></PageContext2>} />
                 <Route path="/pago/:id" element={<Payment />} />
                 <Route path="/:companyId" element={<PageContext2><UserStore /></PageContext2>} />

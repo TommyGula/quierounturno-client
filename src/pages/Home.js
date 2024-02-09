@@ -37,7 +37,7 @@ const Home = ({context}) => {
 {/*                         <Button variant="outline-primary" className="h-100" onClick={() => navigate("/buscar-turno")}>QUIERO BUSCAR UN TURNO</Button> */}
                     </div>
                 </section>
-                <section>
+                <section id="buscar">
                     <Search context={context}></Search>
                 </section>
             </div>

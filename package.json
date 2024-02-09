@@ -37,7 +37,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "react-scripts --openssl-legacy-provider start",
     "start:staging": "env-cmd -f .env.staging npm run-script start",
     "build": "react-scripts build",
     "build:staging": "env-cmd -f .env.staging npm run-script build",

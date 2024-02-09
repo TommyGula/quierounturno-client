@@ -85,13 +85,13 @@ const Navbar = () => {
                             
                                     <Dropdown.Menu>
                                     <Dropdown.Item>
-                                    <Link to="/mi-perfil">Mis perfil</Link>
+                                    <Link to="/mi-perfil" className="text-black text-decoration-none">Mis perfil</Link>
                                     </Dropdown.Item>
                                     <Dropdown.Item>
-                                    <Link to="/mis-turnos">Mis turnos</Link>
+                                    <Link to="/mis-turnos" className="text-black text-decoration-none">Mis turnos</Link>
                                     </Dropdown.Item>
                                     <Dropdown.Item>
-                                    <Link to="/mis-negocios">Mis negocios</Link>
+                                    <Link to="/mis-negocios" className="text-black text-decoration-none">Mis negocios</Link>
                                     </Dropdown.Item>
                                     <Dropdown.Divider />
                                     <Dropdown.Item onClick={logOut}>Cerrar sesión</Dropdown.Item>
@@ -99,7 +99,13 @@ const Navbar = () => {
                                 </Dropdown>
                             </div>
                              :
+
+                             <>
+                                {
+                                    !window.location.pathname.includes("login") &&
                             <Link className="text-decoration-none" to={"/login"}><Button className="text-white d-flex align-items-center f-700 mt-lg-2" variant="contained"><strong>INICIAR SESIÓN</strong> <PersonFill color="#FFFFFF" className="mx-2"></PersonFill></Button></Link>
+                                }
+                             </>
                         }
                     </div>
                 </div>

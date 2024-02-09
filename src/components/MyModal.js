@@ -1,6 +1,6 @@
 import React from "react";
 import { Modal } from "react-bootstrap";
-import { Button } from "@material-ui/core";
+import { Button } from "@mui/material";
 
 const MyModal = (props) => {
     return(

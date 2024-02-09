@@ -21,12 +21,13 @@ import { put, remove } from "../utils/axios";
 
 const Agenda = ({ daily, monthly, weekly, agenda, readonly, duration, context, update, select, selected, handleAgenda }) => {
     useEffect(() => {
-        console.log("USER AGENDA ", agenda)
         if (agenda.length) {
             const firstHour = new Date(agenda[0].startDate).getHours() - 1;
             const lastHour = new Date(agenda[agenda.length - 1].endDate).getHours() + 1;
-            setStartDayHour(firstHour);
-            setEndDayHour(lastHour);
+            setStartDayHour(9);
+            //setStartDayHour(firstHour);
+            setEndDayHour(18);
+            //setEndDayHour(lastHour);
         } else {
             setStartDayHour(1);
             setEndDayHour(1.5);
@@ -54,7 +55,7 @@ const Agenda = ({ daily, monthly, weekly, agenda, readonly, duration, context, u
                     onCommitChanges={commitChanges}
                 />,
                 <IntegratedEditing />,
-                <ConfirmationDialog />,
+                <ConfirmationDialog buttonComponent={ConfirmationDialogButtons}/>,
                 <AppointmentTooltip
                     showCloseButton
                     showOpenButton
@@ -66,6 +67,12 @@ const Agenda = ({ daily, monthly, weekly, agenda, readonly, duration, context, u
                 />
             ]
         }
+    }
+
+    const ConfirmationDialogButtons = () => {
+        return (
+            <div>JAJA</div>
+        )
     }
 
     const Appointment = ({

@@ -1,11 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import MyModal from "./MyModal";
 import MySnackbar from "./MySnackbar";
 import ProtectedRoute from "./ProtectedRoute";
 import UserContext from "../context/UserContext";
 import { useSearchParams } from "react-router-dom";
+import { Button } from "@mui/material";
 import Spinner from "./Spinner";
+import zIndex from "@mui/material/styles/zIndex";
 
 const PageContext2 = (props) => {
     // URL declarations
@@ -99,7 +101,15 @@ const PageContext2 = (props) => {
                     !loading ? null
                     : <Spinner></Spinner>
                 }
-                <div className={props.embed ? "" : "background"}>
+                <div className={"position-relative " + (props.embed ? "" : "background")}>
+                    {
+                        props.redirect ?
+                        <div className="p-4 position-absolute top-0 end-0" style={{zIndex:3}}>
+                        <Link to={props.redirect} className="">
+                            <Button variant="link" className="">{props.redirectCta || "NAVEGAR"}</Button>
+                        </Link>
+                        </div> : null
+                    }
                     {
                         props.private ?
                         <ProtectedRoute>
